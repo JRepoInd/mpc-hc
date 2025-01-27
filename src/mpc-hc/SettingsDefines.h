@@ -81,7 +81,8 @@
 #define IDS_RS_FULLSCREEN_DELAY             _T("FullscreenDelay")
 #define IDS_RS_VERTICALALIGNVIDEO          _T("VerticalAlignVideo")
 #define IDS_RS_SUBTITLEPATHS                _T("SubtitlePaths")
-#define IDS_RS_USEDEFAULTSUBTITLESSTYLE     _T("UseDefaultsubtitlesStyle")
+#define IDS_RS_OVERRIDE_DEFAULT_STYLE       _T("OverrideDefaultStyle")
+#define IDS_RS_OVERRIDE_ALL_STYLES          _T("OverrideAllStyles")
 #define IDS_RS_THUMBWIDTH                   _T("ThumbWidth")
 #define IDS_RS_SUBSAVEEXTERNALSTYLEFILE     _T("SubSaveExternalStyleFile")
 #define IDS_RS_D3DFULLSCREEN                _T("D3DFullScreen")
@@ -115,6 +116,10 @@
 #define IDS_RS_USE_FREETYPE                 _T("UseFreetype")
 #define IDS_RS_USE_MEDIAINFO_LOAD_FILE_DURATION _T("UseMediainfoLoadFileDuration")
 #define IDS_RS_CAPTURE_DEINTERLACE          _T("CaptureDeinterlace")
+#define IDS_RS_PAUSE_WHILE_DRAGGING_SEEKBAR _T("PauseWhileDraggingSeekbar")
+#define IDS_RS_CONFIRM_FILE_DELETE          _T("ConfirmFileDelete")
+#define IDS_RS_LIBASS_FOR_SRT               _T("UseLibassForSRT")
+#define IDS_RS_SHOW_VOLUME_PERCENTAGE       _T("ShowVolumePercentage")
 
 // Audio
 #define IDS_RS_VOLUME                       _T("Volume")
@@ -258,6 +263,8 @@
 #define IDS_RS_LAST_OPEN_DIR                _T("LastOpenDir")
 #define IDS_RS_ASSOCIATED_WITH_ICON         _T("AssociatedWithIcon")
 #define IDS_RS_ICON_LIB_VERSION             _T("IconLibVersion")
+#define IDS_RS_OSD_TRANSPARENCY             _T("OSDTransparency")
+#define IDS_RS_OSD_BORDER                   _T("OSDBorder")
 
 #define IDS_RS_HIDE_FULLSCREEN_CONTROLS        _T("HideFullscreenControls")
 #define IDS_RS_HIDE_FULLSCREEN_CONTROLS_POLICY _T("HideFullscreenControlsPolicy")
@@ -338,9 +345,6 @@
 #define IDS_RS_DLG_SUBTITLEDL_SORTCOLUMN    _T("SortColumn")
 #define IDS_RS_DLG_SUBTITLEDL_SORTORDER     _T("SortOrder")
 
-#define IDS_R_DLG_SUBTITLEUP                _T("Dialogs\\SubtitleUp")
-#define IDS_RS_DLG_SUBTITLEUP_COLWIDTH      _T("ColWidth")
-
 #define IDS_R_DLG_ORGANIZE_FAV              _T("Dialogs\\OrganizeFavorites")
 
 #define IDS_R_DLG_CMD_LINE_HELP             _T("Dialogs\\CmdLineHelp")
@@ -388,5 +392,18 @@
 
 #define IDS_LAST_QUICKOPEN_PATH             _T("LastQuickOpenPath")
 #define IDS_LAST_FILESAVECOPY_PATH          _T("LastFileSaveCopyPath")
-#define IDS_LAST_FILEOPENDIR_PATH          _T("LastFileOpenDirPath")
+#define IDS_LAST_FILEOPENDIR_PATH           _T("LastFileOpenDirPath")
+#define IDS_EXTERNAL_PLAYLIST_PATH          _T("ExternalPlayListPath")
 
+// Mouse
+#define IDS_R_MOUSE                         L"Mouse"
+#define IDS_RS_MOUSE_BTN_LEFT               L"ButtonLeft"
+#define IDS_RS_MOUSE_BTN_LEFT_DBLCLICK      L"ButtonLeftDblClick"
+#define IDS_RS_MOUSE_BTN_RIGHT              L"ButtonRight"
+#define IDS_RS_MOUSE_BTN_MIDDLE             L"ButtonMiddle"
+#define IDS_RS_MOUSE_BTN_X1                 L"ButtonX1"
+#define IDS_RS_MOUSE_BTN_X2                 L"ButtonX2"
+#define IDS_RS_MOUSE_WHEEL_UP               L"WheelUp"
+#define IDS_RS_MOUSE_WHEEL_DOWN             L"WheelDown"
+#define IDS_RS_MOUSE_WHEEL_LEFT             L"WheelLeft"
+#define IDS_RS_MOUSE_WHEEL_RIGHT            L"WheelRight"

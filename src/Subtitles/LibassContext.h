@@ -117,7 +117,7 @@ public:
     void Unload();
     void LoadASSSample(char* data, int dataSize, REFERENCE_TIME tStart, REFERENCE_TIME tStop);
     void LoadTrackData(ASS_Track* track, char* data, int size);
-    void DefaultStyleChanged();
+    void StylesChanged();
     void LoadASSFont();
     CRect GetSPDRect(SubPicDesc& spd);
     POSITION GetStartPosition(REFERENCE_TIME rt, double fps);
@@ -136,8 +136,12 @@ protected:
     CSimpleTextSubtitle* m_STS;
     IPin* m_pPin;
     std::unique_ptr<uint32_t[]> m_pixels;
-    CRect lastDirty;
+    CRect lastDirty, lastUncroppedDirty;
     CRect lastSPDRect;
     REFERENCE_TIME rtCurrent;
     bool curTimeInitialized;
+    bool m_bOverrideDefaultStyleActive = false;
+    bool m_bOverrideAllStylesActive = false;
+    CSTSStyleMap origStyles;
+    bool hasStyleOverrides;
 };

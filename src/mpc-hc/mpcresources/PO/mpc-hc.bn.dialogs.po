@@ -202,7 +202,7 @@ msgid "About"
 msgstr "MPC-HC বিষয়ক"
 
 msgctxt "IDD_ABOUTBOX_IDC_AUTHORS_LINK"
-msgid "Copyright 2002-2024 clsid2 and others"
+msgid "Copyright 2002-2025 clsid2 and others"
 msgstr ""
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
@@ -404,7 +404,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Control"
 msgstr "কন্ট্রোল"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC5"
 msgid "Volume step:"
 msgstr "ভলিউম পরিবর্তনে পদক্ষেপ:"
 
@@ -412,7 +412,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "%"
 msgstr "%"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC6"
 msgid "Speed step:"
 msgstr "গতি পরিবর্তনে পদক্ষেপ:"
 
@@ -432,7 +432,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC1"
 msgid "time(s)"
 msgstr "বার"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC7"
 msgid "Repeat mode:"
 msgstr "পুনরাবৃত্তির ধরন:"
 
@@ -468,11 +468,11 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Default track preference"
 msgstr "ডিফল্ট ট্র্যাক নির্ধারণে অগ্রাধিকার"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC8"
 msgid "Subtitles:"
 msgstr "সাবটাইটেল:"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC9"
 msgid "Audio:"
 msgstr "অডিও:"
 
@@ -528,11 +528,11 @@ msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Texture settings (open the video again to see the changes)"
 msgstr "টেক্সচারের সেটিংসমূহ (পরিবর্তন দেখতে পুনরায় ভিডিও চালনা করতে হবে)"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC9"
 msgid "Sub pictures to buffer:"
 msgstr "সাব পিকচারসমূহ থেকে বাফার:"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
 msgstr "সর্বোচ্চ টেক্সচার রেজ্যুলূশন:"
 
@@ -774,9 +774,9 @@ msgctxt "IDD_FAVADD_CAPTION"
 msgid "Add Favorite"
 msgstr "পছন্দেরতালিকায় সংযুক্তকরণ"
 
-msgctxt "IDD_FAVADD_IDC_STATIC"
+msgctxt "IDD_FAVADD_IDC_STATIC1"
 msgid "Choose a name for your shortcut:"
-msgstr "শর্টকাটের নাম নির্ধারণ:"
+msgstr ""
 
 msgctxt "IDD_FAVADD_IDC_CHECK1"
 msgid "Remember position"
@@ -854,13 +854,13 @@ msgctxt "IDD_PNSPRESET_DLG_IDOK"
 msgid "&Save"
 msgstr "সেইভ করি(&S)"
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC2"
 msgid "Pos: 0.0 -> 1.0"
-msgstr "অবস্থান: ০.০ -> ১.০"
+msgstr ""
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC3"
 msgid "Zoom: 0.2 -> 3.0"
-msgstr "জূম: ০.২ -> ৩.০"
+msgstr ""
 
 msgctxt "IDD_PPAGEACCELTBL_CAPTION"
 msgid "Shortcut Keys"
@@ -906,50 +906,6 @@ msgctxt "IDD_SAVE_DLG_IDCANCEL"
 msgid "Cancel"
 msgstr "বাতিল করি"
 
-msgctxt "IDD_SAVETEXTFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "এনকোডিং:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "এনকোডিং:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "Delay:"
-msgstr "বিলম্বন:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "ms"
-msgstr "ms"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_CHECK1"
-msgid "Save custom style"
-msgstr "ব্যক্তি-নির্ধারিত ধরনটি সেইভ করি"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEGএর বৈশিষ্ট্যগুণ:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Thumbnails:"
-msgstr "থাম্ব্‌নেইলসমূহ:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "rows"
-msgstr "সারিসংখ্যা"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "columns"
-msgstr "কলামসংখ্যা"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Image width:"
-msgstr "ছবির প্রস্থ:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "pixels"
-msgstr "পিক্সেলসংখ্যা"
-
 msgctxt "IDD_ADDREGFILTER_CAPTION"
 msgid "Select Filter"
 msgstr "ফিল্টার নির্ধারণ"
@@ -974,19 +930,19 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_BUTTON1"
 msgid "Font"
 msgstr "ফন্ট"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC1"
 msgid "Spacing"
 msgstr "বর্ণমধ্যবর্তী ফাঁক"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC2"
 msgid "Angle (z,°)"
 msgstr "কৌণিকচ্যুতি (z,°)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
 msgstr "বর্ণের প্রস্থ (x,%)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
 msgstr "বর্ণের দৈর্ঘ্য (y,%)"
 
@@ -1002,11 +958,11 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
 msgstr "অস্বচ্ছ ক্ষেত্র"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
 msgstr "বর্ডারের ব্যাস"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC6"
 msgid "Shadow"
 msgstr "ছায়ার গভীরতা"
 
@@ -1014,19 +970,19 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Screen Alignment && Margins"
 msgstr "স্ক্রীনে অবস্থানবিন্যাস ও মার্জিনসমূহের সাইজ"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC7"
 msgid "Left"
 msgstr "বামে"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC8"
 msgid "Right"
 msgstr "ডানে"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC9"
 msgid "Top"
 msgstr "উপরে"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC10"
 msgid "Bottom"
 msgstr "নিন্মে"
 
@@ -1058,6 +1014,10 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Outline"
 msgstr "বর্ডার"
 
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgid "Shadow"
+msgstr "ছায়ার গভীরতা"
+
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK1"
 msgid "Link alpha channels"
 msgstr "সবগুলোর অস্বচ্ছতা একইমাত্রায় পরিবর্তন"
@@ -1078,8 +1038,24 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK2"
 msgid "Use libass for SSA/ASS"
 msgstr ""
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK3"
-msgid "Use libass for SRT"
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Buttons"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Double click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Right click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
+msgid "Default"
 msgstr ""
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_STATIC"
@@ -1122,13 +1098,13 @@ msgctxt "IDD_PPAGELOGO_IDC_RADIO2"
 msgid "External:"
 msgstr "বাহিরস্থ:"
 
-msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
-msgid "Browse..."
-msgstr "ব্রাউজ করি..."
-
 msgctxt "IDD_PPAGELOGO_IDC_CHECK1"
 msgid "Apply Monitor Color Profile"
 msgstr ""
+
+msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
+msgid "Browse..."
+msgstr "ব্রাউজ করি..."
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "DirectShow Video"
@@ -1559,6 +1535,10 @@ msgctxt "IDD_PPAGEFULLSCREEN_IDC_STATIC2"
 msgid "s"
 msgstr "s"
 
+msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK7"
+msgid "Allow separate control window"
+msgstr ""
+
 msgctxt "IDD_NAVIGATION_DLG_IDC_NAVIGATION_INFO"
 msgid "Info"
 msgstr "তথ্যাদি"
@@ -1608,7 +1588,7 @@ msgctxt "IDD_PPAGESUBMISC_IDC_STATIC1"
 msgid "Ignore files containing any of the following word(s):"
 msgstr "নিম্নোক্ত শব্দ(সমূহ) ধারণকারী ফাইলসমূহকে উপেক্ষা করি:"
 
-msgctxt "IDD_PPAGESUBMISC_IDC_STATIC"
+msgctxt "IDD_PPAGESUBMISC_IDC_STATIC2"
 msgid "Languages in order of preference:"
 msgstr "পছন্দনীয় ভাষাসমূহের অগ্রাধিকার ক্রম (উদাহরণ- \"eng ell spa\"):"
 
@@ -1783,10 +1763,6 @@ msgctxt "IDD_PPAGEAUDIORENDERER_IDC_BUTTON3"
 msgid "MPC Audio Renderer Settings"
 msgstr ""
 
-msgctxt "IDD_SAVEIMAGEDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEGএর বৈশিষ্ট্যগুণ:"
-
 msgctxt "IDD_CMD_LINE_HELP_CAPTION"
 msgid "Command line help"
 msgstr "কমান্ড লাইনের সহায়িকা"
@@ -1846,6 +1822,22 @@ msgctxt "IDD_PPAGEDPICALC_IDC_STATIC2"
 msgid "Autoplay"
 msgstr ""
 
+msgctxt "IDD_ADDCOMMAND_DLG_CAPTION"
+msgid "Select command"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDC_STATIC"
+msgid "Filter:"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDOK"
+msgid "OK"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDCANCEL"
+msgid "Cancel"
+msgstr ""
+
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"
 msgid "Theme"
 msgstr ""
@@ -1866,24 +1858,32 @@ msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
 msgstr ""
 
-msgctxt "IDD_PPAGETHEME_IDC_STATIC"
+msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_CHECK8"
-msgid "Hover:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
-msgid "Hover type:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
-msgid "Preview width (% of screen)"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK2"
 msgid "Show chapter marks on seekbar"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
+msgid "Seekbar Hover"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
+msgid "Hover Position:"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
+msgid "Show video preview"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_CHECK14"
+msgid "Show time"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
+msgid "Preview width (% of screen)"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC10"
@@ -1910,14 +1910,6 @@ msgctxt "IDD_PPAGETHEME_IDC_CHECK6"
 msgid "A-B Marks"
 msgstr ""
 
-msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
-msgid "Language"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
-msgid "Language:"
-msgstr ""
-
 msgctxt "IDD_PPAGETHEME_IDC_STATIC9"
 msgid "On Screen Display (OSD)"
 msgstr ""
@@ -1935,7 +1927,7 @@ msgid "Font size:"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK13"
-msgid "Display Current T&ime"
+msgid "Display Current Time"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
@@ -1964,6 +1956,14 @@ msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK11"
 msgid "Control via Windows UI (SMTC)"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
+msgid "Language"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
+msgid "Language:"
 msgstr ""
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_CAPTION"

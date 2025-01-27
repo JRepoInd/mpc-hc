@@ -98,7 +98,7 @@ extern bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& 
 extern bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyName);
 extern IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB);
 extern CStringW GetFriendlyName(CStringW DisplayName);
-extern HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv);
+extern HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv, IUnknown* aggregate = nullptr);
 extern HRESULT LoadExternalFilter(LPCTSTR path, REFCLSID clsid, IBaseFilter** ppBF);
 extern HRESULT LoadExternalPropertyPage(IPersist* pP, REFCLSID clsid, IPropertyPage** ppPP);
 extern bool UnloadUnusedExternalObjects();
@@ -126,6 +126,7 @@ extern LPCTSTR GetDXVAMode(const GUID* guidDecoder);
 extern CString ReftimeToString(const REFERENCE_TIME& rtVal);
 extern CString ReftimeToString2(const REFERENCE_TIME& rtVal);
 extern CString ReftimeToString3(const REFERENCE_TIME& rtVal);
+extern CStringW ReftimeToString4(REFERENCE_TIME rt, bool showZeroHours = true);
 extern CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours = false);
 extern REFERENCE_TIME StringToReftime(LPCTSTR strVal);
 extern void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName);

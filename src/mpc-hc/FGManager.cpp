@@ -43,10 +43,16 @@
 #include <ksproxy.h>
 #include <mpconfig.h>
 #include <mvrInterfaces.h>
+#include "../src/thirdparty/LAVFilters/src/include/IURLSourceFilterLAV.h"
 
 #include <initguid.h>
 #include "moreuuids.h"
 #include <dmodshow.h>
+
+#if !TRACE_GRAPH_BUILD
+#undef TRACE
+#define TRACE(...)
+#endif
 
 //
 // CFGManager
@@ -66,6 +72,9 @@ CFGManager::CFGManager(LPCTSTR pName, LPUNKNOWN pUnk, HWND hWnd, bool IsPreview)
     , m_transform()
     , m_override()
     , m_deadends()
+    , m_aborted(false)
+    , m_useragent()
+    , m_referrer()
 {
     m_pUnkInner.CoCreateInstance(CLSID_FilterGraph, GetOwner());
     m_pFM.CoCreateInstance(CLSID_FilterMapper2);
@@ -187,6 +196,33 @@ bool CFGManager::CheckBytes(HANDLE hFile, CString chkbytes)
     }
 
     return sl.IsEmpty();
+}
+
+bool CFGManager::HasFilterOverride(CLSID clsid)
+{
+    POSITION pos = m_override.GetHeadPosition();
+    while (pos) {
+        CFGFilter* pFGF = m_transform.GetNext(pos);
+        if (pFGF->GetCLSID() == clsid) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CFGManager::HasFilterOverride(CStringW DisplayName)
+{
+    POSITION pos = m_override.GetHeadPosition();
+    while (pos) {
+        CFGFilter* pFGF = m_transform.GetNext(pos);
+        if (pFGF->GetCLSID() == CLSID_NULL) {
+            CFGFilterRegistry* pFGFR = dynamic_cast<CFGFilterRegistry*>(pFGF);
+            if (pFGFR && pFGFR->GetDisplayName().CompareNoCase(DisplayName) == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 CFGFilter* LookupFilterRegistry(const GUID& guid, CAtlList<CFGFilter*>& list, UINT64 fallback_merit = MERIT64_DO_USE)
@@ -393,6 +429,21 @@ HRESULT CFGManager::EnumSourceFilters(LPCWSTR lpcwstrFileName, CFGFilterList& fl
                 fl.Insert(pFGF, 7);
             }
         }
+
+        // preferred external filters
+        if (ext == L".avs" || ext == L".vpy") {
+            POSITION pos = m_override.GetHeadPosition();
+            while (pos) {
+                CFGFilter* pFGF = m_override.GetNext(pos);
+                if (pFGF->GetMerit() >= MERIT64_ABOVE_DSHOW) {
+                    if (pFGF->GetCLSID() == GUIDFromCString(L"{7D3BBD5A-880D-4A30-A2D1-7B8C2741AFEF}")) { // MPC Script Source
+                        if (ext == L".avs" || ext == L".vpy") {
+                            fl.Insert(pFGF, 0, false, false);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     if (hFile != INVALID_HANDLE_VALUE) {
@@ -408,7 +459,8 @@ HRESULT CFGManager::EnumSourceFilters(LPCWSTR lpcwstrFileName, CFGFilterList& fl
 
 HRESULT CFGManager::AddSourceFilter(CFGFilter* pFGF, LPCWSTR lpcwstrFileName, LPCWSTR lpcwstrFilterName, IBaseFilter** ppBF)
 {
-    TRACE(_T("FGM: AddSourceFilter trying '%s'\n"), CStringFromGUID(pFGF->GetCLSID()).GetString());
+    CLSID clsid = pFGF->GetCLSID();
+    TRACE(_T("FGM: AddSourceFilter trying '%s'\n"), CStringFromGUID(clsid).GetString());
 
     CheckPointer(lpcwstrFileName, E_POINTER);
     CheckPointer(ppBF, E_POINTER);
@@ -428,7 +480,7 @@ HRESULT CFGManager::AddSourceFilter(CFGFilter* pFGF, LPCWSTR lpcwstrFileName, LP
         return E_NOINTERFACE;
     }
 
-    if (pFGF->GetCLSID() == __uuidof(CRARFileSource) && m_entryRFS.GetLength() > 0) {
+    if (clsid == __uuidof(CRARFileSource) && m_entryRFS.GetLength() > 0) {
         CComPtr<CRARFileSource> rfs = static_cast<CRARFileSource*>(pBF.p);
         std::wstring preselectedRarFileEntry(m_entryRFS.GetBuffer());
         rfs->SetPreselectedRarFileEntry(preselectedRarFileEntry);
@@ -439,39 +491,55 @@ HRESULT CFGManager::AddSourceFilter(CFGFilter* pFGF, LPCWSTR lpcwstrFileName, LP
     }
 
     const AM_MEDIA_TYPE* pmt = nullptr;
-
-    CMediaType mt;
-    const CAtlList<GUID>& types = pFGF->GetTypes();
-    if (types.GetCount() == 2 && (types.GetHead() != GUID_NULL || types.GetTail() != GUID_NULL)) {
-        mt.majortype = types.GetHead();
-        mt.subtype = types.GetTail();
-        pmt = &mt;
-    }
-
-    // sometimes looping with AviSynth
-    if (FAILED(hr = pFSF->Load(lpcwstrFileName, pmt))) {
-        RemoveFilter(pBF);
-        return hr;
-    }
-
-    // doh :P
-    BeginEnumMediaTypes(GetFirstPin(pBF, PINDIR_OUTPUT), pEMT, pmt2) {
-        static const GUID guid1 =
-        { 0x640999A0, 0xA946, 0x11D0, { 0xA5, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
-        static const GUID guid2 =
-        { 0x640999A1, 0xA946, 0x11D0, { 0xA5, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } };
-        static const GUID guid3 =
-        { 0xD51BD5AE, 0x7548, 0x11CF, { 0xA5, 0x20, 0x00, 0x80, 0xC7, 0x7E, 0xF5, 0x8A } };
-
-        if (pmt2->subtype == guid1 || pmt2->subtype == guid2 || pmt2->subtype == guid3) {
-            RemoveFilter(pBF);
-            pFGF = DEBUG_NEW CFGFilterRegistry(CLSID_NetShowSource);
-            hr = AddSourceFilter(pFGF, lpcwstrFileName, lpcwstrFilterName, ppBF);
-            delete pFGF;
-            return hr;
+    if (clsid == GUID_LAVSplitterSource) {
+        CComQIPtr<IURLSourceFilterLAV> pSFL = pBF;
+        if (pSFL && (!m_useragent.IsEmpty() || !m_referrer.IsEmpty())) {
+            // ToDo: set strings
+            hr = pSFL->LoadURL(lpcwstrFileName, m_useragent, m_referrer);
+            if (FAILED(hr)) {
+                RemoveFilter(pBF);
+                return hr;
+            }
+        } else {
+            hr = pFSF->Load(lpcwstrFileName, pmt);
+            if (FAILED(hr)) {
+                RemoveFilter(pBF);
+                return hr;
+            }
         }
+    } else {
+        CMediaType mt;
+        const CAtlList<GUID>& types = pFGF->GetTypes();
+        if (types.GetCount() == 2 && (types.GetHead() != GUID_NULL || types.GetTail() != GUID_NULL)) {
+            mt.majortype = types.GetHead();
+            mt.subtype = types.GetTail();
+            pmt = &mt;
+        }
+        
+        hr = pFSF->Load(lpcwstrFileName, pmt);
+        if (FAILED(hr) || m_aborted) { // sometimes looping with AviSynth
+            RemoveFilter(pBF);
+            return m_aborted ? E_ABORT : hr;
+        }
+
+        BeginEnumMediaTypes(GetFirstPin(pBF, PINDIR_OUTPUT), pEMT, pmt2) {
+            static const GUID guid1 =
+            { 0x640999A0, 0xA946, 0x11D0, { 0xA5, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }; // ASX file Parser
+            static const GUID guid2 =
+            { 0x640999A1, 0xA946, 0x11D0, { 0xA5, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 } }; // ASX v.2 file Parser
+            static const GUID guid3 =
+            { 0xD51BD5AE, 0x7548, 0x11CF, { 0xA5, 0x20, 0x00, 0x80, 0xC7, 0x7E, 0xF5, 0x8A } }; // XML Playlist
+
+            if (pmt2->subtype == guid1 || pmt2->subtype == guid2 || pmt2->subtype == guid3) {
+                RemoveFilter(pBF);
+                pFGF = DEBUG_NEW CFGFilterRegistry(CLSID_NetShowSource);
+                hr = AddSourceFilter(pFGF, lpcwstrFileName, lpcwstrFilterName, ppBF);
+                delete pFGF;
+                return hr;
+            }
+        }
+        EndEnumMediaTypes(pmt2);
     }
-    EndEnumMediaTypes(pmt2);
 
     *ppBF = pBF.Detach();
 
@@ -606,6 +674,10 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
     CAutoLock cAutoLock(this);
 
     CheckPointer(pPinOut, E_POINTER);
+
+    if (m_aborted) {
+        return E_ABORT;
+    }
 
     HRESULT hr;
 
@@ -774,6 +846,10 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
 
         pos = fl.GetHeadPosition();
         while (pos) {
+            if (m_aborted) {
+                return E_ABORT;
+            }
+
             CFGFilter* pFGF = fl.GetNext(pos);
 
             // avoid pointless connection attempts
@@ -818,7 +894,8 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
 
             CComPtr<IBaseFilter> pBF;
             CInterfaceList<IUnknown, &IID_IUnknown> pUnks;
-            if (FAILED(pFGF->Create(&pBF, pUnks))) {
+            hr = pFGF->Create(&pBF, pUnks);
+            if (FAILED(hr)) {
                 TRACE(_T("FGM: Filter creation failed\n"));
                 if (!m_bIsCapture) {
                     // Check if selected video renderer fails to load
@@ -849,30 +926,6 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                 continue;
             }
 
-            auto hookDirectXVideoDecoderService = [](CComQIPtr<IMFGetService> pMFGS) {
-                CComPtr<IDirectXVideoDecoderService> pDecoderService;
-                CComPtr<IDirect3DDeviceManager9>     pDeviceManager;
-                HANDLE                               hDevice = INVALID_HANDLE_VALUE;
-
-                if (SUCCEEDED(pMFGS->GetService(MR_VIDEO_ACCELERATION_SERVICE, IID_PPV_ARGS(&pDeviceManager)))
-                    && SUCCEEDED(pDeviceManager->OpenDeviceHandle(&hDevice))
-                    && SUCCEEDED(pDeviceManager->GetVideoService(hDevice, IID_PPV_ARGS(&pDecoderService)))) {
-                    HookDirectXVideoDecoderService(pDecoderService);
-                    pDeviceManager->CloseDeviceHandle(hDevice);
-                }
-                pDeviceManager.Release();
-                pDecoderService.Release();
-            };
-
-            if (!m_bIsPreview && !pMadVRAllocatorPresenter) {
-                if (CComQIPtr<IMFGetService> pMFGS = pBF) {
-                    // hook IDirectXVideoDecoderService to get DXVA status & logging;
-                    // why before ConnectFilterDirect() - some decoder, like ArcSoft & Cyberlink, init DXVA2 decoder while connect to the renderer ...
-                    // madVR crash on call ::GetService() before connect
-                    hookDirectXVideoDecoderService(pMFGS);
-                }
-            }
-
             hr = ConnectFilterDirect(pPinOut, pBF, nullptr);
             /*
             if (FAILED(hr))
@@ -895,6 +948,10 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                 TRACE(_T("FGM: Filter connected to %s\n"), CLSIDToString(clsid_pinout));
                 if (!IsStreamEnd(pBF)) {
                     fDeadEnd = false;
+                }
+
+                if (m_aborted) {
+                    return E_ABORT;
                 }
 
                 if (bContinueRender) {
@@ -929,6 +986,10 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
                         m_pUnks.AddTail(pMB);
                     }
 
+                    if (CComQIPtr<IMFVideoMixerBitmap> pMFVMB = pBF) {
+                        m_pUnks.AddTail(pMFVMB);
+                    }
+
                     if (CComQIPtr<IMFGetService, &__uuidof(IMFGetService)> pMFGS = pBF) {
                         CComPtr<IMFVideoDisplayControl> pMFVDC;
                         CComPtr<IMFVideoMixerBitmap>    pMFMB;
@@ -944,16 +1005,6 @@ HRESULT CFGManager::Connect(IPin* pPinOut, IPin* pPinIn, bool bContinueRender)
 
                         if (SUCCEEDED(pMFGS->GetService(MR_VIDEO_MIXER_SERVICE, IID_PPV_ARGS(&pMFVP)))) {
                             m_pUnks.AddTail(pMFVP);
-                        }
-
-                        //CComPtr<IMFWorkQueueServices> pMFWQS;
-                        //pMFGS->GetService (MF_WORKQUEUE_SERVICES, IID_PPV_ARGS(&pMFWQS));
-                        //pMFWQS->BeginRegisterPlatformWorkQueueWithMMCSS(
-
-                        if (!m_bIsPreview && pMadVRAllocatorPresenter) {
-                            // hook IDirectXVideoDecoderService to get DXVA status & logging;
-                            // madVR crash on call ::GetService() before connect - so set Hook after ConnectFilterDirect()
-                            hookDirectXVideoDecoderService(pMFGS);
                         }
                     }
 
@@ -1053,6 +1104,10 @@ STDMETHODIMP CFGManager::RenderFile(LPCWSTR lpcwstrFileName, LPCWSTR lpcwstrPlay
             RemoveFilter(pBF);
 
             deadends.Append(m_deadends);
+
+            if (hr == E_ABORT) {
+                break;
+            }
         } else if (pFG->GetCLSID() == __uuidof(CRARFileSource) && HRESULT_FACILITY(hr) == FACILITY_ITF) {
             hrRFS = hr;
         }
@@ -1104,8 +1159,13 @@ STDMETHODIMP CFGManager::Abort()
         return E_UNEXPECTED;
     }
 
-    // FIXME: this can hang
+    // When a filter (renderer) in the child thread (the graph thread) calls CreateWindow()
+    // then that call triggers an implicit call of SendMessage to the main window.
+    // This is a blocking call, meaning main thread must be able to process that window message.
+    // So we can not request a lock here when called from main thread since that would result in a deadlock.
     //CAutoLock cAutoLock(this);
+
+    m_aborted = true;
 
     return CComQIPtr<IFilterGraph2>(m_pUnkInner)->Abort();
 }
@@ -1222,6 +1282,10 @@ STDMETHODIMP CFGManager::ConnectFilter(IBaseFilter* pBF, IPin* pPinIn)
     CAutoLock cAutoLock(this);
 
     CheckPointer(pBF, E_POINTER);
+
+    if (m_aborted) {
+        return E_ABORT;
+    }
 
     if (pPinIn && S_OK != IsPinDirection(pPinIn, PINDIR_INPUT)) {
         return VFW_E_INVALID_DIRECTION;
@@ -1423,7 +1487,7 @@ STDMETHODIMP CFGManager::RemoveFromROT()
         return S_FALSE;
     }
 
-    CAutoLock cAutoLock(this);
+    //CAutoLock cAutoLock(this);
 
     HRESULT hr;
     CComPtr<IRunningObjectTable> pROT;
@@ -2433,6 +2497,9 @@ void CFGManagerCustom::InsertBlockedFilters()
     // mainconcept color space converter
     m_transform.AddTail(DEBUG_NEW CFGFilterRegistry(GUIDFromCString(_T("{272D77A0-A852-4851-ADA4-9091FEAD4C86}")), MERIT64_DO_NOT_USE));
 
+    // mainconcept mp4 demuxer
+    m_transform.AddTail(DEBUG_NEW CFGFilterRegistry(GUIDFromCString(_T("{2A55FF12-1657-41D7-9D2D-A2CDC6978FF2}")), MERIT64_DO_NOT_USE));
+
     // Accusoft PICVideo M-JPEG Codec
     m_transform.AddTail(DEBUG_NEW CFGFilterRegistry(GUIDFromCString(_T("{4C4CD9E1-F876-11D2-962F-00500471FDDC}")), MERIT64_DO_NOT_USE));
 
@@ -2583,7 +2650,6 @@ CFGManagerCustom::CFGManagerCustom(LPCTSTR pName, LPUNKNOWN pUnk, HWND hWnd, boo
 
     bool bOverrideBroadcom = false;
     CFGFilter* pFGF;
-    m_source;
 
     const bool* src = s.SrcFilters;
     const bool* tra = s.TraFilters;
@@ -2736,7 +2802,11 @@ CFGManagerPlayer::CFGManagerPlayer(LPCTSTR pName, LPUNKNOWN pUnk, HWND hWnd, boo
                 m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_SyncAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_SYNC), renderer_merit));
                 break;
             case VIDRNDT_DS_MPCVR:
-                m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_MPCVRAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_MPCVR), renderer_merit));
+                if (!m_bIsCapture) {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_MPCVRAllocatorPresenter, StrRes(IDS_PPAGE_OUTPUT_MPCVR), renderer_merit));
+                } else {
+                    m_transform.AddTail(DEBUG_NEW CFGFilterVideoRenderer(m_hWnd, CLSID_EnhancedVideoRenderer, StrRes(IDS_PPAGE_OUTPUT_EVR), renderer_merit));
+                }
                 break;
             case VIDRNDT_DS_NULL_COMP:
                 pFGF = DEBUG_NEW CFGFilterInternal<CNullVideoRenderer>(StrRes(IDS_PPAGE_OUTPUT_NULL_COMP), MERIT64_ABOVE_DSHOW + 2);
@@ -2804,6 +2874,13 @@ CFGManagerPlayer::CFGManagerPlayer(LPCTSTR pName, LPUNKNOWN pUnk, HWND hWnd, boo
         } else if (!SelAudioRenderer.IsEmpty()) {
             pFGF = DEBUG_NEW CFGFilterRegistry(SelAudioRenderer, renderer_merit);
             pFGF->AddType(MEDIATYPE_Audio, MEDIASUBTYPE_NULL);
+            m_transform.AddTail(pFGF);
+        }
+
+        // Resampler DMO, add with lowest merit to handle unsupported samplerates with DirectSound/WaveOut renderers
+        CStringW filterid = L"@device:dmo:{F447B69E-1884-4A7E-8055-346F74D6EDB3}{F3602B3F-0592-48DF-A4CD-674721E7EBEB}";
+        if (!HasFilterOverride(filterid)) {
+            pFGF = DEBUG_NEW CFGFilterRegistry(filterid, MERIT64_LOWEST);
             m_transform.AddTail(pFGF);
         }
     } else {

@@ -1253,7 +1253,7 @@ struct ExternalObject {
 static CAtlList<ExternalObject> s_extObjs;
 static CCritSec s_csExtObjs;
 
-HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
+HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv, IUnknown* aggregate)
 {
     CheckPointer(ppv, E_POINTER);
 
@@ -1284,10 +1284,10 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
         typedef HRESULT(__stdcall * PDllGetClassObject)(REFCLSID rclsid, REFIID riid, LPVOID * ppv);
         PDllGetClassObject p = (PDllGetClassObject)GetProcAddress(hInst, "DllGetClassObject");
 
-        if (p && FAILED(hr = p(clsid, iid, ppv))) {
+        if (p && (aggregate || FAILED(hr = p(clsid, iid, ppv)))) {
             CComPtr<IClassFactory> pCF;
             if (SUCCEEDED(hr = p(clsid, IID_PPV_ARGS(&pCF)))) {
-                hr = pCF->CreateInstance(nullptr, iid, ppv);
+                hr = pCF->CreateInstance(aggregate, iid, ppv);
             }
         }
     }
@@ -1364,14 +1364,24 @@ bool UnloadUnusedExternalObjects()
 
 void ExtendMaxPathLengthIfNeeded(CString& path, bool no_url /*= false */)
 {
+    if (!no_url && path.Find(_T("://")) >= 0) { // URL
+        return;
+    }
+
+    // Get long path if shortened
+    if (path.Find(L'~') > 0) {
+        wchar_t destbuf[4096];
+        DWORD len = GetLongPathName(path, destbuf, 4096);
+        if (len > 0 && len < 4096) {
+            path = destbuf;
+        }
+    }
     if (path.GetLength() >= MAX_PATH) {
-        if (no_url || path.Find(_T("://")) < 0) { // not URL
-            if (path.Left(4) != _T("\\\\?\\")) { // not already have long path prefix
-                if (path.Left(2) == _T("\\\\")) { // UNC
-                    path = _T("\\\\?\\UNC") + path.Mid(1);
-                } else { // normal
-                    path = _T("\\\\?\\") + path;
-                }
+        if (path.Left(4) != _T("\\\\?\\")) { // not already have long path prefix
+            if (path.Left(2) == _T("\\\\")) { // UNC
+                path = _T("\\\\?\\UNC") + path.Mid(1);
+            } else { // normal
+                path = _T("\\\\?\\") + path;
             }
         }
     }
@@ -1834,6 +1844,18 @@ CString ReftimeToString3(const REFERENCE_TIME& rtVal)
     return strTemp;
 }
 
+//for compatibility with mpc-be ReftimeToString2, which has option to exclude hours
+CStringW ReftimeToString4(REFERENCE_TIME rt, bool showZeroHours /* = true*/)
+{
+    if (rt == INT64_MIN) {
+        return L"INVALID TIME";
+    }
+
+    DVD_HMSF_TIMECODE tc = RT2HMSF(rt);
+
+    return DVDtimeToString(tc, showZeroHours);
+}
+
 CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours)
 {
     CString strTemp;
@@ -2058,19 +2080,23 @@ CStringW ChannelsToStr(int channels) {
 }
 
 CStringW GetChannelStrFromMediaType(AM_MEDIA_TYPE* pmt, int& channels) {
-    if (pmt && pmt->majortype == MEDIATYPE_Audio) {
-        if (pmt->formattype == FORMAT_WaveFormatEx) {
-            channels = ((WAVEFORMATEX*)pmt->pbFormat)->nChannels;
-            return ChannelsToStr(channels);
-        } else if (pmt->formattype == FORMAT_VorbisFormat) {
-            channels = ((VORBISFORMAT*)pmt->pbFormat)->nChannels;
-            return ChannelsToStr(channels);
-        } else if (pmt->formattype == FORMAT_VorbisFormat2) {
-            channels = ((VORBISFORMAT2*)pmt->pbFormat)->Channels;
-            return ChannelsToStr(channels);
-        } else {
+    if (pmt) {
+        if (pmt->majortype == MEDIATYPE_Audio) {
+            if (pmt->formattype == FORMAT_WaveFormatEx) {
+                channels = ((WAVEFORMATEX*)pmt->pbFormat)->nChannels;
+                return ChannelsToStr(channels);
+            } else if (pmt->formattype == FORMAT_VorbisFormat) {
+                channels = ((VORBISFORMAT*)pmt->pbFormat)->nChannels;
+                return ChannelsToStr(channels);
+            } else if (pmt->formattype == FORMAT_VorbisFormat2) {
+                channels = ((VORBISFORMAT2*)pmt->pbFormat)->Channels;
+                return ChannelsToStr(channels);
+            } else {
+                channels = 2;
+              }
+        } else if (pmt->majortype == MEDIATYPE_Midi) {
             channels = 2;
-            ASSERT(false);
+            return L"";
         }
     }
     ASSERT(false);
@@ -2080,6 +2106,13 @@ CStringW GetChannelStrFromMediaType(AM_MEDIA_TYPE* pmt, int& channels) {
 CStringW GetShortAudioNameFromMediaType(AM_MEDIA_TYPE* pmt) {
     if (!pmt) {
         return L"";
+    }
+    if (pmt->majortype != MEDIATYPE_Audio) {
+        if (pmt->majortype == MEDIATYPE_Midi) {
+            return L"MIDI";
+        } else {
+            return L"";
+        }
     }
 
     if (pmt->subtype == MEDIASUBTYPE_AAC || pmt->subtype == MEDIASUBTYPE_LATM_AAC || pmt->subtype == MEDIASUBTYPE_AAC_ADTS || pmt->subtype == MEDIASUBTYPE_MPEG_ADTS_AAC
@@ -2206,6 +2239,15 @@ bool GetVideoFormatNameFromMediaType(const GUID& guid, CString& name) {
         return true;
     } else if (guid == MEDIASUBTYPE_MPEG2_VIDEO) {
         name = L"MPEG2";
+        return true;
+    } else if (guid == MEDIASUBTYPE_ARGB32) {
+        name = L"ARGB";
+        return true;
+    } else if (guid == MEDIASUBTYPE_RGB32) {
+        name = L"RGB";
+        return true;
+    } else if (guid == MEDIASUBTYPE_LAV_RAWVIDEO) {
+        name = L"RAW";
         return true;
     } else {
         name = L"UNKN";

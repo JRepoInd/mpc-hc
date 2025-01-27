@@ -343,9 +343,6 @@
     <ClCompile Include="SubtitlesProvidersUtils.cpp">
       <Filter>Subtitles</Filter>
     </ClCompile>
-    <ClCompile Include="SubtitleUpDlg.cpp">
-      <Filter>Subtitles</Filter>
-    </ClCompile>
     <ClCompile Include="SubtitleDlDlg.cpp">
       <Filter>Subtitles</Filter>
     </ClCompile>
@@ -415,9 +412,6 @@
       <Filter>Main View</Filter>
     </ClCompile>
     <ClCompile Include="FullscreenWnd.cpp">
-      <Filter>Main View</Filter>
-    </ClCompile>
-    <ClCompile Include="VMROSD.cpp">
       <Filter>Main View</Filter>
     </ClCompile>
     <ClCompile Include="PlayerCaptureBar.cpp">
@@ -614,7 +608,22 @@
     <ClCompile Include="CMPCThemeResizablePropertySheet.cpp">
       <Filter>MPCTheme</Filter>
     </ClCompile>
-    <ClCompile Include="RarEntrySelectorDialog.cpp"/>
+    <ClCompile Include="RarEntrySelectorDialog.cpp" />
+    <ClCompile Include="OSD.cpp">
+      <Filter>Main View</Filter>
+    </ClCompile>
+    <ClCompile Include="WicUtils.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="PPageMouse.cpp">
+      <Filter>Property Dialogs\Player Options\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="AddCommandDlg.cpp">
+      <Filter>Modal Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="MPCFolderPickerDialog.cpp">
+      <Filter>Modal Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppSettings.h">
@@ -878,9 +887,6 @@
     <ClInclude Include="SubtitlesProvidersUtils.h">
       <Filter>Subtitles</Filter>
     </ClInclude>
-    <ClInclude Include="SubtitleUpDlg.h">
-      <Filter>Subtitles</Filter>
-    </ClInclude>
     <ClInclude Include="SubtitleDlDlg.h">
       <Filter>Subtitles</Filter>
     </ClInclude>
@@ -960,9 +966,6 @@
       <Filter>Main View</Filter>
     </ClInclude>
     <ClInclude Include="FullscreenWnd.h">
-      <Filter>Main View</Filter>
-    </ClInclude>
-    <ClInclude Include="VMROSD.h">
       <Filter>Main View</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\version.h">
@@ -1166,7 +1169,22 @@
     <ClInclude Include="CMPCThemeResizablePropertySheet.h">
       <Filter>MPCTheme</Filter>
     </ClInclude>
-    <ClInclude Include="RarEntrySelectorDialog.h"/>
+    <ClInclude Include="RarEntrySelectorDialog.h" />
+    <ClInclude Include="OSD.h">
+      <Filter>Main View</Filter>
+    </ClInclude>
+    <ClInclude Include="WicUtils.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="PPageMouse.h">
+      <Filter>Property Dialogs\Player Options\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="AddCommandDlg.h">
+      <Filter>Modal Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MPCFolderPickerDialog.h">
+      <Filter>Modal Dialogs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\ani.avi">

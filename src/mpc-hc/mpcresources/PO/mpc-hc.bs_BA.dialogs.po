@@ -202,7 +202,7 @@ msgid "About"
 msgstr "O"
 
 msgctxt "IDD_ABOUTBOX_IDC_AUTHORS_LINK"
-msgid "Copyright 2002-2024 clsid2 and others"
+msgid "Copyright 2002-2025 clsid2 and others"
 msgstr ""
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
@@ -402,7 +402,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Control"
 msgstr "Kontrola"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC5"
 msgid "Volume step:"
 msgstr "Korak zvuka:"
 
@@ -410,7 +410,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "%"
 msgstr "%"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC6"
 msgid "Speed step:"
 msgstr "Korak brzine:"
 
@@ -430,7 +430,7 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC1"
 msgid "time(s)"
 msgstr "vrijeme"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC7"
 msgid "Repeat mode:"
 msgstr "Modus ponavljanja:"
 
@@ -466,11 +466,11 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Default track preference"
 msgstr "Podrazumijevani prioritet zapisa"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC8"
 msgid "Subtitles:"
 msgstr "Titlovi"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC9"
 msgid "Audio:"
 msgstr "Audio:"
 
@@ -526,11 +526,11 @@ msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Texture settings (open the video again to see the changes)"
 msgstr "Podešenja teksture (otvorite video ponovo da biste vidjeli izmjene)"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC9"
 msgid "Sub pictures to buffer:"
 msgstr "Podslike za buferovanje:"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
 msgstr "Maksimalna rezolucija teksture:"
 
@@ -771,9 +771,9 @@ msgctxt "IDD_FAVADD_CAPTION"
 msgid "Add Favorite"
 msgstr "Dodaj Omiljeno"
 
-msgctxt "IDD_FAVADD_IDC_STATIC"
+msgctxt "IDD_FAVADD_IDC_STATIC1"
 msgid "Choose a name for your shortcut:"
-msgstr "Izaberite ime za svoju prečicu:"
+msgstr ""
 
 msgctxt "IDD_FAVADD_IDC_CHECK1"
 msgid "Remember position"
@@ -851,13 +851,13 @@ msgctxt "IDD_PNSPRESET_DLG_IDOK"
 msgid "&Save"
 msgstr "&Snimi"
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC2"
 msgid "Pos: 0.0 -> 1.0"
-msgstr "Poz: 0.0 -> 1.0"
+msgstr ""
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC3"
 msgid "Zoom: 0.2 -> 3.0"
-msgstr "Zum: 0.2 -> 3.0"
+msgstr ""
 
 msgctxt "IDD_PPAGEACCELTBL_CAPTION"
 msgid "Shortcut Keys"
@@ -903,50 +903,6 @@ msgctxt "IDD_SAVE_DLG_IDCANCEL"
 msgid "Cancel"
 msgstr "Otkaži"
 
-msgctxt "IDD_SAVETEXTFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "Kodiranje:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "Kodiranje:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "Delay:"
-msgstr "Odgoda:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "ms"
-msgstr "ms"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_CHECK1"
-msgid "Save custom style"
-msgstr "Snimi vlastiti stil"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEG kvalitet:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Thumbnails:"
-msgstr "Sličice:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "rows"
-msgstr "vrste"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "columns"
-msgstr "kolone"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Image width:"
-msgstr "Širina slike:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "pixels"
-msgstr "piksela"
-
 msgctxt "IDD_ADDREGFILTER_CAPTION"
 msgid "Select Filter"
 msgstr "Izaberite Filter"
@@ -971,19 +927,19 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_BUTTON1"
 msgid "Font"
 msgstr "Tip slova"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC1"
 msgid "Spacing"
 msgstr "Razmak"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC2"
 msgid "Angle (z,°)"
 msgstr "Ugao (z,°)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
 msgstr "Razmjera (x,%)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
 msgstr "Razmjera (y,%)"
 
@@ -999,11 +955,11 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
 msgstr "Neproziran okvir"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
 msgstr "Širina"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC6"
 msgid "Shadow"
 msgstr "Sjena"
 
@@ -1011,19 +967,19 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Screen Alignment && Margins"
 msgstr "Pogledajte Poravnavanje i Margine"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC7"
 msgid "Left"
 msgstr "Lijevo"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC8"
 msgid "Right"
 msgstr "Desno"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC9"
 msgid "Top"
 msgstr "Vrh"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC10"
 msgid "Bottom"
 msgstr "Dno"
 
@@ -1055,6 +1011,10 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Outline"
 msgstr "Kontura"
 
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgid "Shadow"
+msgstr "Sjena"
+
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK1"
 msgid "Link alpha channels"
 msgstr "Linkuj alfa kanale"
@@ -1075,8 +1035,24 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK2"
 msgid "Use libass for SSA/ASS"
 msgstr ""
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK3"
-msgid "Use libass for SRT"
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Buttons"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Double click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Right click"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
+msgid "Default"
 msgstr ""
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_STATIC"
@@ -1119,13 +1095,13 @@ msgctxt "IDD_PPAGELOGO_IDC_RADIO2"
 msgid "External:"
 msgstr "Eksterni:"
 
-msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
-msgid "Browse..."
-msgstr "Pretraži..."
-
 msgctxt "IDD_PPAGELOGO_IDC_CHECK1"
 msgid "Apply Monitor Color Profile"
 msgstr ""
+
+msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
+msgid "Browse..."
+msgstr "Pretraži..."
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "DirectShow Video"
@@ -1560,6 +1536,10 @@ msgctxt "IDD_PPAGEFULLSCREEN_IDC_STATIC2"
 msgid "s"
 msgstr "s"
 
+msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK7"
+msgid "Allow separate control window"
+msgstr ""
+
 msgctxt "IDD_NAVIGATION_DLG_IDC_NAVIGATION_INFO"
 msgid "Info"
 msgstr "Info"
@@ -1608,7 +1588,7 @@ msgctxt "IDD_PPAGESUBMISC_IDC_STATIC1"
 msgid "Ignore files containing any of the following word(s):"
 msgstr "Ignoriši dokumente koji sadrže bilo koju od sljedećih riječi:"
 
-msgctxt "IDD_PPAGESUBMISC_IDC_STATIC"
+msgctxt "IDD_PPAGESUBMISC_IDC_STATIC2"
 msgid "Languages in order of preference:"
 msgstr "Jezici po redoslijedu preferiranja:"
 
@@ -1781,10 +1761,6 @@ msgctxt "IDD_PPAGEAUDIORENDERER_IDC_BUTTON3"
 msgid "MPC Audio Renderer Settings"
 msgstr ""
 
-msgctxt "IDD_SAVEIMAGEDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEG kvalitet:"
-
 msgctxt "IDD_CMD_LINE_HELP_CAPTION"
 msgid "Command line help"
 msgstr "Pomoć iz komandne linije"
@@ -1842,6 +1818,22 @@ msgctxt "IDD_PPAGEDPICALC_IDC_STATIC2"
 msgid "Autoplay"
 msgstr ""
 
+msgctxt "IDD_ADDCOMMAND_DLG_CAPTION"
+msgid "Select command"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDC_STATIC"
+msgid "Filter:"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDOK"
+msgid "OK"
+msgstr ""
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDCANCEL"
+msgid "Cancel"
+msgstr ""
+
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"
 msgid "Theme"
 msgstr ""
@@ -1862,24 +1854,32 @@ msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
 msgstr ""
 
-msgctxt "IDD_PPAGETHEME_IDC_STATIC"
+msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_CHECK8"
-msgid "Hover:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
-msgid "Hover type:"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
-msgid "Preview width (% of screen)"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK2"
 msgid "Show chapter marks on seekbar"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
+msgid "Seekbar Hover"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
+msgid "Hover Position:"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
+msgid "Show video preview"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_CHECK14"
+msgid "Show time"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
+msgid "Preview width (% of screen)"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC10"
@@ -1906,14 +1906,6 @@ msgctxt "IDD_PPAGETHEME_IDC_CHECK6"
 msgid "A-B Marks"
 msgstr ""
 
-msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
-msgid "Language"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
-msgid "Language:"
-msgstr ""
-
 msgctxt "IDD_PPAGETHEME_IDC_STATIC9"
 msgid "On Screen Display (OSD)"
 msgstr ""
@@ -1931,7 +1923,7 @@ msgid "Font size:"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK13"
-msgid "Display Current T&ime"
+msgid "Display Current Time"
 msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
@@ -1960,6 +1952,14 @@ msgstr ""
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK11"
 msgid "Control via Windows UI (SMTC)"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
+msgid "Language"
+msgstr ""
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
+msgid "Language:"
 msgstr ""
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_CAPTION"

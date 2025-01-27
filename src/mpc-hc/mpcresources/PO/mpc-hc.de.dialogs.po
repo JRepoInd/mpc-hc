@@ -4,17 +4,19 @@
 # Translators:
 # MPC HC <adiposegithub@gmail.com>, 2020
 # Michał Trzebiatowski <michtrz@gmail.com>, 2020
-# Gaugg_Markus, 2020
 # Julian Burner, 2021
 # fc5b3681a8011aa2097a1a11b3d42f55_901a704, 2021
-# Steve, 2023
+# Gaugg_Markus, 2024
+# Steve, 2024
+# Jan Klass <kissaki@posteo.de>, 2024
+# Nico F., 2024
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2023-11-03 23:11:00+0000\n"
+"POT-Creation-Date: 2024-11-08 22:23:47+0000\n"
 "PO-Revision-Date: 2020-01-02 07:46+0000\n"
-"Last-Translator: Steve, 2023\n"
+"Last-Translator: Nico F., 2024\n"
 "Language-Team: German (https://app.transifex.com/mpchc/teams/106126/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -209,8 +211,8 @@ msgid "About"
 msgstr "Über"
 
 msgctxt "IDD_ABOUTBOX_IDC_AUTHORS_LINK"
-msgid "Copyright 2002-2024 clsid2 and others"
-msgstr "Copyright 2002-2024 clsid2 und weitere"
+msgid "Copyright 2002-2025 clsid2 and others"
+msgstr "Copyright 2002-2025 clsid2 und anderen"
 
 msgctxt "IDD_ABOUTBOX_IDC_STATIC"
 msgid ""
@@ -410,17 +412,17 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Control"
 msgstr "Steuerung"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC5"
 msgid "Volume step:"
-msgstr "Lautstärkestufen:"
+msgstr "Lautstärkestufe:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "%"
 msgstr "%"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC6"
 msgid "Speed step:"
-msgstr "Tempostufen:"
+msgstr "Geschwindigkeitsstufe:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Playback"
@@ -438,9 +440,9 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC1"
 msgid "time(s)"
 msgstr "Mal(e) ab"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC7"
 msgid "Repeat mode:"
-msgstr "Wiedergabe-Modus:"
+msgstr "Wiederholungsmodus:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "After Playback"
@@ -460,11 +462,11 @@ msgstr "In Desktop einpassen mit:"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "min %"
-msgstr ""
+msgstr "min %"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "max %"
-msgstr ""
+msgstr "max %"
 
 msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC4"
 msgid "Vertical Alignment:"
@@ -474,11 +476,11 @@ msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
 msgid "Default track preference"
 msgstr "Bevorzugte Spuren"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC8"
 msgid "Subtitles:"
 msgstr "Untertitel:"
 
-msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC"
+msgctxt "IDD_PPAGEPLAYBACK_IDC_STATIC9"
 msgid "Audio:"
 msgstr "Audio:"
 
@@ -534,11 +536,11 @@ msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
 msgid "Texture settings (open the video again to see the changes)"
 msgstr "Untertitel-Textur (Neuladen des Videos erforderlich)"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC9"
 msgid "Sub pictures to buffer:"
-msgstr "Anzahl der Untertitelbilder im Puffer:"
+msgstr "Unterbilder zum Puffern:"
 
-msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC"
+msgctxt "IDD_PPAGESUBTITLES_IDC_STATIC21"
 msgid "Maximum texture resolution:"
 msgstr "Maximale Texturauflösung:"
 
@@ -779,7 +781,7 @@ msgctxt "IDD_FAVADD_CAPTION"
 msgid "Add Favorite"
 msgstr "Favoriten hinzufügen"
 
-msgctxt "IDD_FAVADD_IDC_STATIC"
+msgctxt "IDD_FAVADD_IDC_STATIC1"
 msgid "Choose a name for your shortcut:"
 msgstr "Name des Favoriten:"
 
@@ -829,7 +831,7 @@ msgstr "OK"
 
 msgctxt "IDD_PNSPRESET_DLG_CAPTION"
 msgid "PnS Frame Adjust Presets"
-msgstr ""
+msgstr "PnS Rahmenanpassung Voreinstellungen"
 
 msgctxt "IDD_PNSPRESET_DLG_IDC_BUTTON2"
 msgid "New"
@@ -859,11 +861,11 @@ msgctxt "IDD_PNSPRESET_DLG_IDOK"
 msgid "&Save"
 msgstr "OK"
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC2"
 msgid "Pos: 0.0 -> 1.0"
 msgstr "Pos.: 0.0 -> 1.0"
 
-msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC"
+msgctxt "IDD_PNSPRESET_DLG_IDC_STATIC3"
 msgid "Zoom: 0.2 -> 3.0"
 msgstr "Zoom: 0.2 -> 3.0"
 
@@ -911,50 +913,6 @@ msgctxt "IDD_SAVE_DLG_IDCANCEL"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-msgctxt "IDD_SAVETEXTFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "Encoding:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC1"
-msgid "Encoding:"
-msgstr "Encoding:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "Delay:"
-msgstr "Verzögerung:"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_STATIC"
-msgid "ms"
-msgstr "ms"
-
-msgctxt "IDD_SAVESUBTITLESFILEDIALOGTEMPL_IDC_CHECK1"
-msgid "Save custom style"
-msgstr "Angepassten Style speichern"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEG-Qualität:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Thumbnails:"
-msgstr "Layout:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "rows"
-msgstr "Zeilen"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "columns"
-msgstr "Spalten"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "Image width:"
-msgstr "Breite:"
-
-msgctxt "IDD_SAVETHUMBSDIALOGTEMPL_IDC_STATIC"
-msgid "pixels"
-msgstr "Pixel"
-
 msgctxt "IDD_ADDREGFILTER_CAPTION"
 msgid "Select Filter"
 msgstr "Externen Filter hinzufügen"
@@ -979,21 +937,21 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_BUTTON1"
 msgid "Font"
 msgstr "Schriftart"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC1"
 msgid "Spacing"
-msgstr "Laufweite"
+msgstr "Abstand"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC2"
 msgid "Angle (z,°)"
 msgstr "Winkel (z,°)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC3"
 msgid "Scale (x,%)"
-msgstr "Größe (x,%)"
+msgstr "Maßstab (x,%)"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC4"
 msgid "Scale (y,%)"
-msgstr "Größe (y,%)"
+msgstr "Maßstab (y,%)"
 
 msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Border Style"
@@ -1007,11 +965,11 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_RADIO2"
 msgid "Opaque box"
 msgstr "Rechteck"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC5"
 msgid "Width"
-msgstr "Randstärke"
+msgstr "Breite"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC6"
 msgid "Shadow"
 msgstr "Schatten"
 
@@ -1019,19 +977,19 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Screen Alignment && Margins"
 msgstr "Bildschirmausrichtung und Seitenränder"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC7"
 msgid "Left"
 msgstr "Links"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC8"
 msgid "Right"
 msgstr "Rechts"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC9"
 msgid "Top"
 msgstr "Oben"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC10"
 msgid "Bottom"
 msgstr "Unten"
 
@@ -1063,6 +1021,10 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
 msgid "Outline"
 msgstr "Kontur"
 
+msgctxt "IDD_PPAGESUBSTYLE_IDC_STATIC"
+msgid "Shadow"
+msgstr "Schatten"
+
 msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK1"
 msgid "Link alpha channels"
 msgstr "Alphakanäle verbinden"
@@ -1083,9 +1045,25 @@ msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK2"
 msgid "Use libass for SSA/ASS"
 msgstr "libass für SSA/ASS verwenden"
 
-msgctxt "IDD_PPAGESUBSTYLE_IDC_CHECK3"
-msgid "Use libass for SRT"
-msgstr "libass für SRT verwenden"
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Buttons"
+msgstr "Tasten"
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Click"
+msgstr "Klick"
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Double click"
+msgstr "Doppelklick"
+
+msgctxt "IDD_PPAGEMOUSE_IDC_STATIC"
+msgid "Right click"
+msgstr "Rechtsklick"
+
+msgctxt "IDD_PPAGEMOUSE_IDC_BUTTON2"
+msgid "Default"
+msgstr "Vorbelegung"
 
 msgctxt "IDD_PPAGEINTERNALFILTERS_IDC_STATIC"
 msgid ""
@@ -1127,13 +1105,13 @@ msgctxt "IDD_PPAGELOGO_IDC_RADIO2"
 msgid "External:"
 msgstr "Extern:"
 
-msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
-msgid "Browse..."
-msgstr "&Öffnen..."
-
 msgctxt "IDD_PPAGELOGO_IDC_CHECK1"
 msgid "Apply Monitor Color Profile"
 msgstr "Übernehme Bildschirm-Farbprofil"
+
+msgctxt "IDD_PPAGELOGO_IDC_BUTTON2"
+msgid "Browse..."
+msgstr "&Öffnen..."
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "DirectShow Video"
@@ -1141,7 +1119,7 @@ msgstr "Video-Renderer"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_BUTTON1"
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "DXVA"
@@ -1169,7 +1147,7 @@ msgstr "Audio-Renderer"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_BUTTON2"
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 msgctxt "IDD_PPAGEOUTPUT_IDC_STATIC"
 msgid "Subtitle Renderer"
@@ -1563,6 +1541,10 @@ msgctxt "IDD_PPAGEFULLSCREEN_IDC_STATIC2"
 msgid "s"
 msgstr "s"
 
+msgctxt "IDD_PPAGEFULLSCREEN_IDC_CHECK7"
+msgid "Allow separate control window"
+msgstr "Steuerung über separates Fenster erlauben"
+
 msgctxt "IDD_NAVIGATION_DLG_IDC_NAVIGATION_INFO"
 msgid "Info"
 msgstr "Info"
@@ -1608,9 +1590,9 @@ msgctxt "IDD_PPAGESUBMISC_IDC_STATIC1"
 msgid "Ignore files containing any of the following word(s):"
 msgstr "Teilpfade ausgenommener Mediendateien:"
 
-msgctxt "IDD_PPAGESUBMISC_IDC_STATIC"
+msgctxt "IDD_PPAGESUBMISC_IDC_STATIC2"
 msgid "Languages in order of preference:"
-msgstr "Auswahl der Untertitelsprachen:"
+msgstr "Sprachen in präferierter Reihenfolge:"
 
 msgctxt "IDD_PPAGESUBMISC_IDC_CHECK_AUTOSAVE_ONLINE_SUBTITLE"
 msgid ""
@@ -1792,10 +1774,6 @@ msgctxt "IDD_PPAGEAUDIORENDERER_IDC_BUTTON3"
 msgid "MPC Audio Renderer Settings"
 msgstr "MPC-Audio-Renderer-Einstellungen"
 
-msgctxt "IDD_SAVEIMAGEDIALOGTEMPL_IDC_STATIC"
-msgid "JPEG quality:"
-msgstr "JPEG-Qualität:"
-
 msgctxt "IDD_CMD_LINE_HELP_CAPTION"
 msgid "Command line help"
 msgstr "Kommandozeilenhilfe"
@@ -1852,9 +1830,25 @@ msgctxt "IDD_PPAGEDPICALC_IDC_STATIC2"
 msgid "Autoplay"
 msgstr "Automatisch abspielen"
 
+msgctxt "IDD_ADDCOMMAND_DLG_CAPTION"
+msgid "Select command"
+msgstr "Aktion auswählen"
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDC_STATIC"
+msgid "Filter:"
+msgstr "Filter:"
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDOK"
+msgid "OK"
+msgstr "OK"
+
+msgctxt "IDD_ADDCOMMAND_DLG_IDCANCEL"
+msgid "Cancel"
+msgstr "Abbrechen"
+
 msgctxt "IDD_PPAGETHEME_IDC_STATIC1"
 msgid "Theme"
-msgstr ""
+msgstr "Theme"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK1"
 msgid "Use Modern Theme"
@@ -1866,120 +1860,128 @@ msgstr "Moderne Themenfarbe:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC3"
 msgid "Control buttons size:"
-msgstr ""
+msgstr "Größe der Steuertasten:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC4"
 msgid "Seekbar"
-msgstr ""
+msgstr "Zeitleiste"
 
-msgctxt "IDD_PPAGETHEME_IDC_STATIC"
+msgctxt "IDD_PPAGETHEME_IDC_STATIC22"
 msgid "Modern Seekbar height:"
 msgstr "Höhe der modernen Zeitleiste:"
 
-msgctxt "IDD_PPAGETHEME_IDC_CHECK8"
-msgid "Hover:"
-msgstr ""
+msgctxt "IDD_PPAGETHEME_IDC_CHECK2"
+msgid "Show chapter marks on seekbar"
+msgstr "Kapitelmarkierungen in der Zeitleiste anzeigen"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC8"
-msgid "Hover type:"
-msgstr ""
+msgid "Seekbar Hover"
+msgstr "Zeitleistenvorschau"
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC11"
+msgid "Hover Position:"
+msgstr "Vorschauposition"
+
+msgctxt "IDD_PPAGETHEME_IDC_SEEK_PREVIEW"
+msgid "Show video preview"
+msgstr "Videovorschau anzeigen"
+
+msgctxt "IDD_PPAGETHEME_IDC_CHECK14"
+msgid "Show time"
+msgstr "Zeitangabe anzeigen"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC7"
 msgid "Preview width (% of screen)"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_CHECK2"
-msgid "Show chapter marks on seekbar"
-msgstr ""
+msgstr "Vorschaubreite (% des Bildschirms)"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC10"
 msgid "Status Bar Elements"
-msgstr ""
+msgstr "Elemente der Statusleiste"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK3"
 msgid "Track Language"
-msgstr ""
+msgstr "Tonspursprache"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK4"
 msgid "Video Info"
-msgstr ""
+msgstr "Video-Infos"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK12"
 msgid "Audio Info"
-msgstr ""
+msgstr "Audio-Info"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK5"
 msgid "FPS"
-msgstr ""
+msgstr "FPS"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK6"
 msgid "A-B Marks"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
-msgid "Language"
-msgstr ""
-
-msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
-msgid "Language:"
-msgstr ""
+msgstr "A-B Markierungen"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC9"
 msgid "On Screen Display (OSD)"
-msgstr ""
+msgstr "Bildschirmanzeige (OSD)"
 
 msgctxt "IDD_PPAGETHEME_IDC_SHOW_OSD"
 msgid "Show OSD (requires restart)"
-msgstr ""
+msgstr "OSD anzeigen (Neustart erforderlich)"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC6"
 msgid "Font:"
-msgstr ""
+msgstr "Schrift:"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC23"
 msgid "Font size:"
-msgstr ""
+msgstr "Schriftgröße:"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK13"
-msgid "Display Current T&ime"
-msgstr ""
+msgid "Display Current Time"
+msgstr "Aktuelle Zeit anzeigen"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
 msgid "Window Behavior"
-msgstr ""
+msgstr "Fensterverhalten"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK7"
 msgid "Limit window proportions on resize"
-msgstr ""
+msgstr "Fensterproportionen bei Größenänderung begrenzen"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK9"
 msgid "Snap to desktop edges"
-msgstr ""
+msgstr "An den Kanten der Arbeitsfläche einrasten"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK10"
 msgid "Hide Windowed Controls"
-msgstr ""
+msgstr "Gefensterte Steuerelemente ausblenden"
 
 msgctxt "IDD_PPAGETHEME_IDC_STATIC"
 msgid "Windows Integration"
-msgstr ""
+msgstr "Windows-Integration"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK_ENHANCED_TASKBAR"
 msgid "Use enhanced taskbar features"
-msgstr ""
+msgstr "Erweiterte Funktionen der Taskleiste verwenden"
 
 msgctxt "IDD_PPAGETHEME_IDC_CHECK11"
 msgid "Control via Windows UI (SMTC)"
-msgstr ""
+msgstr "Steuerung über Windows UI (SMTC)"
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC21"
+msgid "Language"
+msgstr "Sprache"
+
+msgctxt "IDD_PPAGETHEME_IDC_STATIC5"
+msgid "Language:"
+msgstr "Sprache:"
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_CAPTION"
 msgid "Select Media from RAR"
-msgstr ""
+msgstr " Medien aus RAR auswählen"
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_IDOK"
 msgid "Select"
-msgstr ""
+msgstr "Auswählen"
 
 msgctxt "IDD_RAR_ENTRY_SELECTOR_IDCANCEL"
 msgid "Cancel"
-msgstr ""
+msgstr "Abbrechen"

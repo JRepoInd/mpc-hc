@@ -853,7 +853,12 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 
     ALLOCATOR_PROPERTIES props, actual;
     m_pAllocator->GetProperties(&props);
-    pOut->CurrentAllocator()->GetProperties(&actual);
+    IMemAllocator* cur_alloc = pOut->CurrentAllocator();
+    if (!cur_alloc) {
+        ASSERT(false);
+        return E_FAIL;
+    }
+    cur_alloc->GetProperties(&actual);
 
     REFERENCE_TIME rtStart = 0, rtStop = 0;
     if (S_OK == pSample->GetTime(&rtStart, &rtStop)) {
@@ -1323,6 +1328,9 @@ HRESULT CStreamSwitcherFilter::CompleteConnect(PIN_DIRECTION dir, CBasePin* pPin
                 delete pInputPin;
                 return E_FAIL;
             }
+            if (pInputPin == (CStreamSwitcherInputPin*)0x3) { // weird x86 bug
+                return E_FAIL;
+            }
             m_pInputs.AddTail(pInputPin);
         }
     }
@@ -1510,8 +1518,28 @@ STDMETHODIMP CStreamSwitcherFilter::Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWOR
                 bFound = true;
 
                 if (ppmt) {
-                    // ToDo: if upstream filter is a decoder, then use audio mediatype of input pin of decoder
-                    *ppmt = CreateMediaType(&m_pInput->CurrentMediaType());
+                    bool found = false;
+                    CComPtr<IPin> pPinUpstream;
+                    if (SUCCEEDED(m_pInput->ConnectedTo(&pPinUpstream)) && pPinUpstream) {
+                        // find audio input pin of upstream filter
+                        if (CComQIPtr<IBaseFilter> pBF = GetFilterFromPin(pPinUpstream)) {
+                            BeginEnumPins(pBF, pEP, pPin) {
+                                CMediaTypeEx mt;
+                                PIN_DIRECTION dir;
+                                if (SUCCEEDED(pPin->QueryDirection(&dir)) && dir == PINDIR_INPUT && SUCCEEDED(pPin->ConnectionMediaType(&mt))) {
+                                    if (mt.majortype == MEDIATYPE_Audio) {
+                                        *ppmt = CreateMediaType(&mt);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            EndEnumPins;
+                        }
+                    }
+                    if (!found) {
+                        *ppmt = CreateMediaType(&m_pInput->CurrentMediaType());
+                    }
                 }
 
                 if (pdwFlags) {

@@ -25,7 +25,7 @@ msgstr "&Dosya"
 
 msgctxt "ID_FILE_OPENQUICK"
 msgid "&Quick Open File..."
-msgstr "&Hızlı dosya aç..."
+msgstr "&Tez dosya aç..."
 
 msgctxt "ID_FILE_OPENMEDIA"
 msgid "&Open File/URL..."
@@ -189,7 +189,7 @@ msgstr "İşleyici ayarları"
 
 msgctxt "ID_VIEW_TEARING_TEST"
 msgid "&Tearing Test"
-msgstr "&Yırtılma testi"
+msgstr "&Yırtılmayı sına"
 
 msgctxt "ID_VIEW_DISPLAY_RENDERER_STATS"
 msgid "&Display Statistics"
@@ -289,7 +289,7 @@ msgstr "&Parlak (2,2 Gama)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DIM"
 msgid "&Dim (2.35 Gamma)"
-msgstr "&Sönük (2,35 Gama)"
+msgstr "&Soluk (2,35 Gama)"
 
 msgctxt "ID_VIEW_CM_AMBIENTLIGHT_DARK"
 msgid "D&ark (2.4 Gamma)"
@@ -361,11 +361,11 @@ msgstr "S&ıfırla"
 
 msgctxt "ID_VIEW_RESET_DEFAULT"
 msgid "Reset to &default renderer settings"
-msgstr "&Varsayılan işleyici ayarlarına dön"
+msgstr "&Olağan işleyici ayarlarına dön"
 
 msgctxt "ID_VIEW_RESET_OPTIMAL"
 msgid "Reset to &optimal renderer settings"
-msgstr "&Tavsiye edilen işleyici ayarlarına dön"
+msgstr "En &uygun işleyici ayarlarına dön"
 
 msgctxt "POPUP"
 msgid "Video &Frame"
@@ -385,7 +385,7 @@ msgstr "&İki kat boyut"
 
 msgctxt "ID_VIEW_VF_STRETCH"
 msgid "&Stretch To Window"
-msgstr "&Pencereye uzat"
+msgstr "&Sündür"
 
 msgctxt "ID_VIEW_VF_FROMINSIDE"
 msgid "Touch Window From &Inside"
@@ -409,7 +409,7 @@ msgstr "&En boy oranı"
 
 msgctxt "ID_ASPECTRATIO_DAR"
 msgid "&Default (DAR)"
-msgstr "&Varsayılan (DAR)"
+msgstr "&Olağan (DAR)"
 
 msgctxt "ID_ASPECTRATIO_4_3"
 msgid "&4:3"
@@ -513,7 +513,7 @@ msgstr "&Üstte kal"
 
 msgctxt "ID_ONTOP_DEFAULT"
 msgid "&Default"
-msgstr "&Varsayılan"
+msgstr "&Olağan"
 
 msgctxt "ID_ONTOP_ALWAYS"
 msgid "&Always"
@@ -521,7 +521,7 @@ msgstr "&Her zaman"
 
 msgctxt "ID_ONTOP_WHILEPLAYING"
 msgid "While &Playing"
-msgstr "Medya &oynatılırken"
+msgstr "&Medya oynatılırken"
 
 msgctxt "ID_ONTOP_WHILEPLAYINGVIDEO"
 msgid "While Playing &Video"
@@ -581,55 +581,55 @@ msgstr "Yürütme &hızı"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_025"
 msgid "0.25 x"
-msgstr "x 0,25"
+msgstr "0,25 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_050"
 msgid "0.50 x"
-msgstr "x 0,50"
+msgstr "0,50 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_075"
 msgid "0.75 x"
-msgstr "x 0,75"
+msgstr "0,75 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_090"
 msgid "0.90 x"
-msgstr "x 0,90"
+msgstr "0,90 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_100"
 msgid "1.00 x"
-msgstr "x 1,00"
+msgstr "1,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_110"
 msgid "1.10 x"
-msgstr "x 1,10"
+msgstr "1,10 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_125"
 msgid "1.25 x"
-msgstr "x 1,25"
+msgstr "1,25 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_150"
 msgid "1.50 x"
-msgstr "x 1,50"
+msgstr "1,50 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_200"
 msgid "2.00 x"
-msgstr "x 2,00"
+msgstr "2,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_300"
 msgid "3.00 x"
-msgstr "x 3,00"
+msgstr "3,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_400"
 msgid "4.00 x"
-msgstr "x 4,00"
+msgstr "4,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_600"
 msgid "6.00 x"
-msgstr "x 6,00"
+msgstr "6,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_800"
 msgid "8.00 x"
-msgstr "x 8,00"
+msgstr "8,00 x"
 
 msgctxt "ID_PLAY_PLAYBACKRATE_FPS24"
 msgid "24 fps"

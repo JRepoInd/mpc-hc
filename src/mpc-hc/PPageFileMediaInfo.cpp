@@ -27,6 +27,7 @@
 #include "PPageFileMediaInfo.h"
 #include "WinAPIUtils.h"
 #include "../DeCSS/VobFile.h"
+#include "PathUtils.h"
 
 #include "MediaInfo/MediaInfoDLL.h"
 using namespace MediaInfoDLL;
@@ -35,9 +36,9 @@ using namespace MediaInfoDLL;
 
 // CPPageFileMediaInfo dialog
 
-IMPLEMENT_DYNAMIC(CPPageFileMediaInfo, CMPCThemePropertyPage)
+IMPLEMENT_DYNAMIC(CPPageFileMediaInfo, CMPCThemeResizablePropertyPage)
 CPPageFileMediaInfo::CPPageFileMediaInfo(CString path, IFileSourceFilter* pFSF, IDvdInfo2* pDVDI, CMainFrame* pMainFrame)
-    : CMPCThemePropertyPage(CPPageFileMediaInfo::IDD, CPPageFileMediaInfo::IDD)
+    : CMPCThemeResizablePropertyPage(CPPageFileMediaInfo::IDD, CPPageFileMediaInfo::IDD)
     , m_fn(path)
     , m_path(path)
     , m_bSyncAnalysis(false)
@@ -92,6 +93,10 @@ CPPageFileMediaInfo::CPPageFileMediaInfo(CString path, IFileSourceFilter* pFSF, 
     m_futureMIText = std::async(m_bSyncAnalysis ? std::launch::deferred : std::launch::async, [ = ]() {
         MediaInfoDLL::String filename = m_path;
         MediaInfo MI;
+        if (!MI.IsReady()) {
+            CString error = L"MediaInfo loading failed";
+            return error;
+        }
         // If we do a synchronous analysis on an optical drive, we pause the video during
         // the analysis to avoid concurrent accesses to the drive. Note that due to the
         // synchronous nature of the analysis, we are sure that the graph state will not
@@ -174,7 +179,7 @@ BOOL CPPageFileMediaInfo::PreTranslateMessage(MSG* pMsg)
     return __super::PreTranslateMessage(pMsg);
 }
 
-BEGIN_MESSAGE_MAP(CPPageFileMediaInfo, CMPCThemePropertyPage)
+BEGIN_MESSAGE_MAP(CPPageFileMediaInfo, CMPCThemeResizablePropertyPage)
     ON_WM_SHOWWINDOW()
     ON_WM_DESTROY()
     ON_MESSAGE_VOID(WM_MEDIAINFO_READY, OnMediaInfoReady)
@@ -221,6 +226,8 @@ BOOL CPPageFileMediaInfo::OnInitDialog()
             PostMessage(WM_MEDIAINFO_READY); // then notify the window that MediaInfo analysis finished
         });
     }
+
+    AddAnchor(IDC_MIEDIT, TOP_LEFT, BOTTOM_RIGHT);
 
     return TRUE;  // return TRUE unless you set the focus to a control
     // EXCEPTION: OCX Property Pages should return FALSE
@@ -269,12 +276,9 @@ bool CPPageFileMediaInfo::HasMediaInfo()
 
 void CPPageFileMediaInfo::OnSaveAs()
 {
-    CString fn = m_fn;
-
-    fn.TrimRight(_T('/'));
-    int i = std::max(fn.ReverseFind(_T('\\')), fn.ReverseFind(_T('/')));
-    if (i >= 0 && i < fn.GetLength() - 1) {
-        fn = fn.Mid(i + 1);
+    CStringW fn = m_fn;
+    if (PathUtils::IsURL(fn)) {
+        fn = L"online_stream";
     }
     fn.Append(_T(".MediaInfo.txt"));
 

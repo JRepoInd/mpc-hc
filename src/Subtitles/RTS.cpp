@@ -28,6 +28,11 @@
 #include "../filters/renderer/VideoRenderers/RenderersSettings.h"
 #include "moreuuids.h"
 
+#if !TRACE_SUBTITLES
+#undef TRACE
+#define TRACE(...)
+#endif
+
 #define MAXGDIFONTSIZE 36000
 
 // WARNING: this isn't very thread safe, use only one RTS a time. We should use TLS in future.
@@ -229,16 +234,9 @@ void CWord::Transform(CPoint org)
 {
     if ((fabs(m_style.fontAngleX) > 0.000001) || (fabs(m_style.fontAngleY) > 0.000001) || (fabs(m_style.fontAngleZ) > 0.000001) ||
         (fabs(m_style.fontShiftX) > 0.000001) || (fabs(m_style.fontShiftY) > 0.000001)) {
-#if defined(_M_IX86_FP) && _M_IX86_FP < 2
-        if (!m_bUseSSE2) {
-            Transform_C(org);
-        } else
-#endif
-        {
-            Transform_SSE2(org);
-        }
+        Transform_SSE2(org);
     } else if ((fabs(m_style.fontScaleX - 100) > 0.000001) || (fabs(m_style.fontScaleY - 100) > 0.000001)) {
-        Transform_quick(org);
+        Transform_quick_SSE2(org);
     }
 }
 
@@ -284,6 +282,7 @@ bool CWord::CreateOpaqueBox()
     return !!m_pOpaqueBox;
 }
 
+#if 0
 void CWord::Transform_C(const CPoint& org)
 {
     const double scalex = m_style.fontScaleX / 100.0;
@@ -330,23 +329,78 @@ void CWord::Transform_C(const CPoint& org)
         mpPathPoints[i].y = std::lround(y) + org.y;
     }
 }
+#endif
 
-void CWord::Transform_quick(const CPoint& org)
+#if 0
+void CWord::Transform_quick_C(const CPoint& org)
 {
     const double scalex = m_style.fontScaleX / 100.0;
     const double scaley = m_style.fontScaleY / 100.0;
 
-    double dOrgX = static_cast<double>(org.x);
-    double dOrgY = static_cast<double>(org.y);
     for (ptrdiff_t i = 0; i < mPathPoints; i++) {
-        double x, y;
-
-        x = scalex * mpPathPoints[i].x - dOrgX;
-        y = scaley * mpPathPoints[i].y - dOrgY;
+        double x = scalex * mpPathPoints[i].x;
+        double y = scaley * mpPathPoints[i].y;
 
         // round to integer
-        mpPathPoints[i].x = std::lround(x) + org.x;
-        mpPathPoints[i].y = std::lround(y) + org.y;
+        mpPathPoints[i].x = std::lround(x);
+        mpPathPoints[i].y = std::lround(y);
+    }
+}
+#endif
+
+void CWord::Transform_quick_SSE2(const CPoint& org)
+{
+    const __m128 __xscale = _mm_set_ps1((float)(m_style.fontScaleX / 100.0));
+    const __m128 __yscale = _mm_set_ps1((float)(m_style.fontScaleY / 100.0));
+
+    int mPathPointsD4 = mPathPoints / 4;
+    int mPathPointsM4 = mPathPoints % 4;
+
+    for (ptrdiff_t i = 0; i < mPathPointsD4 + 1; i++) {
+        __m128 __pointx, __pointy;
+        // we can't use load .-.
+        if (i != mPathPointsD4) {
+            __pointx = _mm_set_ps((float)mpPathPoints[4 * i + 0].x, (float)mpPathPoints[4 * i + 1].x, (float)mpPathPoints[4 * i + 2].x, (float)mpPathPoints[4 * i + 3].x);
+            __pointy = _mm_set_ps((float)mpPathPoints[4 * i + 0].y, (float)mpPathPoints[4 * i + 1].y, (float)mpPathPoints[4 * i + 2].y, (float)mpPathPoints[4 * i + 3].y);
+        } else { // last cycle
+            switch (mPathPointsM4) {
+            default:
+            case 0:
+                continue;
+            case 1:
+                __pointx = _mm_set_ps((float)mpPathPoints[4 * i + 0].x, 0, 0, 0);
+                __pointy = _mm_set_ps((float)mpPathPoints[4 * i + 0].y, 0, 0, 0);
+                break;
+            case 2:
+                __pointx = _mm_set_ps((float)mpPathPoints[4 * i + 0].x, (float)mpPathPoints[4 * i + 1].x, 0, 0);
+                __pointy = _mm_set_ps((float)mpPathPoints[4 * i + 0].y, (float)mpPathPoints[4 * i + 1].y, 0, 0);
+                break;
+            case 3:
+                __pointx = _mm_set_ps((float)mpPathPoints[4 * i + 0].x, (float)mpPathPoints[4 * i + 1].x, (float)mpPathPoints[4 * i + 2].x, 0);
+                __pointy = _mm_set_ps((float)mpPathPoints[4 * i + 0].y, (float)mpPathPoints[4 * i + 1].y, (float)mpPathPoints[4 * i + 2].y, 0);
+                break;
+            }
+        }
+
+        // scale
+        __pointx = _mm_mul_ps(__pointx, __xscale);
+        __pointy = _mm_mul_ps(__pointy, __yscale);
+
+        // round to integer
+        __m128i __pointxRounded = _mm_cvtps_epi32(__pointx);
+        __m128i __pointyRounded = _mm_cvtps_epi32(__pointy);
+
+        if (i == mPathPointsD4) { // last cycle
+            for (int k = 0; k < mPathPointsM4; k++) {
+                mpPathPoints[i * 4 + k].x = __pointxRounded.m128i_i32[3 - k];
+                mpPathPoints[i * 4 + k].y = __pointyRounded.m128i_i32[3 - k];
+            }
+        } else {
+            for (int k = 0; k < 4; k++) {
+                mpPathPoints[i * 4 + k].x = __pointxRounded.m128i_i32[3 - k];
+                mpPathPoints[i * 4 + k].y = __pointyRounded.m128i_i32[3 - k];
+            }
+        }
     }
 }
 
@@ -1738,7 +1792,6 @@ CRenderedTextSubtitle::CRenderedTextSubtitle(CCritSec* pLock)
     , m_kend(0)
     , m_nPolygon(0)
     , m_polygonBaselineOffset(0)
-    , m_bOverrideStyle(false)
     , m_bOverridePlacement(false)
     , m_overridePlacement(50, 90)
     , m_webvtt_allow_clear(false)
@@ -1841,27 +1894,40 @@ void CRenderedTextSubtitle::Empty()
     __super::Empty();
 }
 
-void CRenderedTextSubtitle::SetOverride(bool bOverride, const STSStyle& styleOverride) {
+void CRenderedTextSubtitle::SetOverride(bool bOverrideDefault, bool bOverrideAll, const STSStyle& styleOverride) {
     overrideANSICharset = styleOverride.charSet;
-    bool changed = (m_bOverrideStyle != bOverride) || bOverride && (m_styleOverride != styleOverride);
+    bool bOverride = bOverrideDefault || bOverrideAll;
+    bool changed = (bOverride && !m_bStyleOverrideActive) || (m_SubRendererSettings.overrideDefaultStyle != bOverrideDefault) || (m_SubRendererSettings.overrideAllStyles != bOverrideAll) || bOverride && (m_SubRendererSettings.defaultStyle != styleOverride);
+    
     if (changed) {
-        m_bOverrideStyle = bOverride;
-        m_styleOverride = styleOverride;
-
-        m_SubRendererSettings.defaultStyle = styleOverride;
+        m_bStyleOverrideActive = bOverride;
+        m_SubRendererSettings.defaultStyle = bOverride ? styleOverride : GetOriginalDefaultStyle();
         m_SubRendererSettings.overrideDefaultStyle = bOverride;
+        m_SubRendererSettings.overrideAllStyles = bOverrideAll;
+
+        UpdateSubRelativeTo(m_subtitleType, m_SubRendererSettings.defaultStyle.relativeTo);
+
+        if (bOverride) {
+            m_scaledBAS = 0;
+        }
+
+        if (bOverride && m_playRes.cy != 288 && m_playRes.cx > 0 && m_playRes.cy > 0) {
+            /* Default style is defined relative to a 384x288 PlayRes resolution. Scale to get consistent font size. */
+            double scaleX = m_playRes.cx / 384.0;
+            double scaleY = m_playRes.cy / 288.0;
+            m_SubRendererSettings.defaultStyle.fontSize    *= scaleY;
+            m_SubRendererSettings.defaultStyle.fontSpacing *= scaleX;
+            m_SubRendererSettings.defaultStyle.marginRect.left   = std::lround(scaleX * m_SubRendererSettings.defaultStyle.marginRect.left);
+            m_SubRendererSettings.defaultStyle.marginRect.top    = std::lround(scaleY * m_SubRendererSettings.defaultStyle.marginRect.top);
+            m_SubRendererSettings.defaultStyle.marginRect.right  = std::lround(scaleX * m_SubRendererSettings.defaultStyle.marginRect.right);
+            m_SubRendererSettings.defaultStyle.marginRect.bottom = std::lround(scaleY * m_SubRendererSettings.defaultStyle.marginRect.bottom);
+        }
+
+        SetDefaultStyle(m_SubRendererSettings.defaultStyle);
 
 #if USE_LIBASS
         if (m_LibassContext.IsLibassActive()) {
-            m_LibassContext.DefaultStyleChanged();
-        } else {
-            if (bOverride) {
-                m_storageRes = m_playRes; // needed to get correct font scaling with default style
-            }
-        }
-#else
-        if (bOverride) {
-            m_storageRes = m_playRes; // needed to get correct font scaling with default style
+            m_LibassContext.StylesChanged();
         }
 #endif
     }
@@ -2373,9 +2439,13 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             case SSA_blur:
                 if (!tag.paramsReal.IsEmpty()) {
                     double n = CalcAnimation(tag.paramsReal[0], style.fGaussianBlur, fAnimate);
-                    style.fGaussianBlur = (n < 0 ? 0 : n * sub->m_target_scale_y);
+                    style.fGaussianBlur = (n < 0 ? 0 : n);
                 } else {
                     style.fGaussianBlur = org.fGaussianBlur;
+                }
+                if (style.fGaussianBlur > 25.0) {
+                    style.fGaussianBlur = 25.0;
+                    TRACE(L"INSANE blur value !!!\n");
                 }
                 break;
             case SSA_bord:
@@ -2905,24 +2975,9 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     sub->m_allowLinePadding = (m_subtitleType != Subtitle::ASS && m_subtitleType != Subtitle::SSA);
 
     STSStyle stss;
-    int scaledBAS = m_scaledBAS;
-    if (m_bOverrideStyle) {
-        // this RTS has been signaled to ignore embedded styles, use the built-in one
-        stss = m_styleOverride;
-
-        // Scale values relatively to subtitles without explicitly defined m_storageRes, we use 384x288 px in this case
-        // This allow to produce constant font size for default style regardless of m_storageRes value
-        // Technically this is a hack, but regular user might not understand why default style font size vary along different files
-        double scaleX = m_storageRes.cx / 384.0;
-        double scaleY = m_storageRes.cy / 288.0;
-
-        stss.fontSize         *= scaleY;
-        stss.fontSpacing      *= scaleX;
-        stss.marginRect.left   = std::lround(scaleX * stss.marginRect.left);
-        stss.marginRect.top    = std::lround(scaleY * stss.marginRect.top);
-        stss.marginRect.right  = std::lround(scaleX * stss.marginRect.right);
-        stss.marginRect.bottom = std::lround(scaleY * stss.marginRect.bottom);
-        scaledBAS = 0;
+    if (m_SubRendererSettings.overrideAllStyles) {
+        stss = m_SubRendererSettings.defaultStyle;
+        UpdateSubRelativeTo(m_subtitleType, stss.relativeTo);
     } else {
         // find the appropriate embedded style
         GetStyle(entry, stss);
@@ -3073,12 +3128,12 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
 
         tmp.fontSize      *= sub->m_total_scale_y * 64.0;
         tmp.fontSpacing   *= sub->m_total_scale_x * 64.0;
-        if (scaledBAS == 1) {
+        if (m_scaledBAS == 1) {
             tmp.outlineWidthX *= sub->m_total_scale_x * 8.0;
             tmp.outlineWidthY *= sub->m_total_scale_y * 8.0;
             tmp.shadowDepthX  *= sub->m_total_scale_x * 8.0;
             tmp.shadowDepthY  *= sub->m_total_scale_y * 8.0;
-        } else if (sub->m_script_scale_y <= 0.9 && scaledBAS == -1 && m_layoutRes.cx == 0 && (m_subtitleType == Subtitle::ASS || m_subtitleType == Subtitle::SSA)) {
+        } else if (sub->m_script_scale_y <= 0.9 && m_scaledBAS == -1 && m_layoutRes.cx == 0 && (m_subtitleType == Subtitle::ASS || m_subtitleType == Subtitle::SSA)) {
             // If PlayRes is bigger than video, it usually is a buggy script where ScaledBorderAndShadow was intended
             tmp.outlineWidthX *= sub->m_total_scale_x * 8.0;
             tmp.outlineWidthY *= sub->m_total_scale_y * 8.0;
@@ -3090,6 +3145,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
             tmp.shadowDepthX  *= 8.0;
             tmp.shadowDepthY  *= 8.0;
         }
+        tmp.fGaussianBlur *= sub->m_target_scale_y;
 
         if (m_nPolygon) {
             ParsePolygon(sub, str.Mid(iStart, iEnd - iStart), tmp);
@@ -3455,9 +3511,6 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
             org2 = org;
         }
 
-        CPoint p(0, r.top);
-        POSITION pos;
-
         // Rectangles for inverse clip
         CRect iclipRect[4];
         iclipRect[0] = CRect(0, 0, spd.w, clipRect.top);
@@ -3465,32 +3518,51 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
         iclipRect[2] = CRect(clipRect.right, clipRect.top, spd.w, clipRect.bottom);
         iclipRect[3] = CRect(0, clipRect.bottom, spd.w, spd.h);
 
-        pos = s->GetHeadPosition();
-        while (pos) {
-            CLine* l = s->GetNext(pos);
+        bool multiLine = s->GetCount() > 1;
+        int numPass = multiLine ? 2 : 1;
+        for (int pass = 0; pass < numPass; pass++) {
+            bool paintBG = (pass == 0);
+            bool paintBody = (!multiLine || pass == 1);
+            CPoint p(0, r.top);
+            POSITION pos;
 
-            p.x = (s->m_scrAlignment % 3) == 1 ? org.x
-                  : (s->m_scrAlignment % 3) == 0 ? org.x - l->m_width
-                  :                            org.x - (l->m_width / 2);
-            if (s->m_clipInverse) {
-                bbox2 |= l->PaintShadow(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
-            } else {
-                bbox2 |= l->PaintShadow(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+            pos = s->GetHeadPosition();
+            while (pos) {
+                CLine* l = s->GetNext(pos);
+
+                p.y += l->m_linePadding; // always zero for first line
+                p.x = (s->m_scrAlignment % 3) == 1 ? org.x
+                    : (s->m_scrAlignment % 3) == 0 ? org.x - l->m_width
+                    : org.x - (l->m_width / 2);
+
+                if (s->m_clipInverse) {
+                    if (paintBG) {
+                        bbox2 |= l->PaintShadow(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintShadow(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintShadow(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintShadow(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintOutline(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintOutline(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintOutline(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintOutline(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                    }
+                    if (paintBody) {
+                        bbox2 |= l->PaintBody(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintBody(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintBody(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintBody(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                    }
+                } else {
+                    if (paintBG) {
+                        bbox2 |= l->PaintShadow(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                        bbox2 |= l->PaintOutline(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                    }
+                    if (paintBody) {
+                        bbox2 |= l->PaintBody(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                    }
+                }
+                p.y += l->m_ascent + l->m_descent;
             }
-            p.y += l->m_ascent + l->m_descent + l->m_linePadding;
         }
     }
 

@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: MPC-HC\n"
-"POT-Creation-Date: 2024-04-10 18:07:20+0000\n"
+"POT-Creation-Date: 2024-12-16 13:01:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,8 +61,12 @@ msgctxt "IDS_PLAY_LOOPMODE_FILE"
 msgid "File"
 msgstr ""
 
-msgctxt "IDS_SUBTITLES_DEFAULT_STYLE"
-msgid "&Default Style"
+msgctxt "IDS_SUB_OVERRIDE_DEFAULT_STYLE"
+msgid "Override Default Style"
+msgstr ""
+
+msgctxt "IDS_SUB_OVERRIDE_ALL_STYLES"
+msgid "Override All Styles"
 msgstr ""
 
 msgctxt "IDS_PLAY_LOOPMODE_PLAYLIST"
@@ -676,7 +680,8 @@ msgstr ""
 msgctxt "IDS_LANG_PREF_EXAMPLE"
 msgid ""
 "Enter your preferred languages here.\n"
-"For example, type: \"eng jpn swe\""
+"Use three letter ISO 639-2 languages codes.\n"
+"For example: eng spa ger fre rus pob jpn chi"
 msgstr ""
 
 msgctxt "IDS_OVERRIDE_EXT_SPLITTER_CHOICE"
@@ -715,6 +720,10 @@ msgstr ""
 
 msgctxt "IDD_PPAGEACCELTBL"
 msgid "Player::Keys"
+msgstr ""
+
+msgctxt "IDD_PPAGEMOUSE"
+msgid "Player::Mouse"
 msgstr ""
 
 msgctxt "IDD_PPAGESUBSTYLE"
@@ -1001,6 +1010,10 @@ msgctxt "IDS_AG_OPEN_FILE_LOCATION"
 msgid "Open File Location"
 msgstr ""
 
+msgctxt "IDS_AG_OPENDIRECTORY"
+msgid "Open Directory"
+msgstr ""
+
 msgctxt "IDS_AG_TOGGLE_NAVIGATION"
 msgid "Toggle Navigation Bar"
 msgstr ""
@@ -1195,6 +1208,10 @@ msgctxt "IDS_PLAYLIST_TOGGLE_SHUFFLE"
 msgid "Toggle Playlist Shuffle"
 msgstr ""
 
+msgctxt "IDS_AUDIOSHIFT_ONOFF"
+msgid "Toggle Audio Delay"
+msgstr ""
+
 msgctxt "IDS_AG_EDL_NEW_CLIP"
 msgid "EDL new clip"
 msgstr ""
@@ -1299,8 +1316,8 @@ msgctxt "IDS_SUBTITLES_RELOAD"
 msgid "&Reload"
 msgstr ""
 
-msgctxt "IDS_SUBTITLES_ENABLE"
-msgid "&Enable"
+msgctxt "IDS_SUBTITLES_HIDE"
+msgid "&Hide Subtitles"
 msgstr ""
 
 msgctxt "IDS_PANSCAN_EDIT"
@@ -2556,7 +2573,7 @@ msgstr ""
 
 msgctxt "IDS_THUMBNAILS_INFO_HEADER"
 msgid ""
-"{\\an7\\1c&H000000&\\fs16\\b0\\bord0\\shad0}File Name: %s\\N%sResolution: "
+"{\\an7\\1c&H000000&\\fs%d\\b0\\bord0\\shad0}File Name: %s\\N%sResolution: "
 "%dx%d %s\\NDuration: %02d:%02d:%02d"
 msgstr ""
 
@@ -3147,10 +3164,6 @@ msgctxt "IDS_MFMT_RM"
 msgid "Real Media"
 msgstr ""
 
-msgctxt "IDS_MFMT_RT"
-msgid "Real Script"
-msgstr ""
-
 msgctxt "IDS_MFMT_WMV"
 msgid "Windows Media Video"
 msgstr ""
@@ -3169,6 +3182,10 @@ msgstr ""
 
 msgctxt "IDS_MFMT_IVF"
 msgid "Indeo Video Format"
+msgstr ""
+
+msgctxt "IDS_MFMT_AVS"
+msgid "AviSynth Script"
 msgstr ""
 
 msgctxt "IDS_MFMT_OTHER"
@@ -4313,6 +4330,14 @@ msgctxt "IDS_CMD_STARTPOS"
 msgid "/startpos hh:mm:ss\tStart playing at position hh:mm:ss"
 msgstr ""
 
+msgctxt "IDS_CMD_AB_START"
+msgid "/ab_start hh:mm:ss\tA-B repeat start position"
+msgstr ""
+
+msgctxt "IDS_CMD_AB_END"
+msgid "/ab_end hh:mm:ss\tA-B repeat end position"
+msgstr ""
+
 msgctxt "IDS_CMD_FIXEDSIZE"
 msgid ""
 "/fixedsize w,h[,x,y]\tSet a fixed window size; optionally specificy upper-"
@@ -4353,12 +4378,52 @@ msgctxt "IDS_MESSAGEBOX_OK"
 msgid "OK"
 msgstr ""
 
+msgctxt "IDS_MOUSE_CLICK_MIDDLE"
+msgid "Middle click"
+msgstr ""
+
+msgctxt "IDS_MOUSE_CLICK_X1"
+msgid "X1 click"
+msgstr ""
+
+msgctxt "IDS_MOUSE_CLICK_X2"
+msgid "X2 click"
+msgstr ""
+
+msgctxt "IDS_MOUSE_WHEEL_UP"
+msgid "Wheel Up"
+msgstr ""
+
+msgctxt "IDS_MOUSE_WHEEL_DOWN"
+msgid "Wheel Down"
+msgstr ""
+
+msgctxt "IDS_MOUSE_WHEEL_LEFT"
+msgid "Wheel Left"
+msgstr ""
+
+msgctxt "IDS_MOUSE_WHEEL_RIGHT"
+msgid "Wheel Right"
+msgstr ""
+
+msgctxt "IDS_MOUSE_ACTION"
+msgid "Action"
+msgstr ""
+
+msgctxt "IDS_MOUSE_COMMAND"
+msgid "Command"
+msgstr ""
+
+msgctxt "IDS_MOUSE_RIGHT_BUTTON"
+msgid "Right button"
+msgstr ""
+
 msgctxt "IDS_MESSAGEBOX_CONTINUE"
 msgid "&Continue"
 msgstr ""
 
 msgctxt "IDS_AG_TOGGLE_DEFAULT_SUBTITLE_STYLE"
-msgid "Toggle Default Subtitle Style"
+msgid "Toggle Override Default Style"
 msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_LOOP_FOLDER_NEXT_FILE"
@@ -4441,6 +4506,20 @@ msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_SHOW_VIDEOINFO_STATUSBAR"
 msgid "Display video info (codec name, resolution) in status bar."
+msgstr ""
+
+msgctxt "IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR"
+msgid "Pause playback while dragging the seekbar."
+msgstr ""
+
+msgctxt "IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE"
+msgid "Show confirmation prompt before deleting file"
+msgstr ""
+
+msgctxt "IDS_PPAGEADVANCED_LIBASS_FOR_SRT"
+msgid ""
+"Use libass (instead of standard renderer) for SRT subtitles. NOT "
+"recommended."
 msgstr ""
 
 msgctxt "IDS_PPAGEADVANCED_OPEN_REC_PANEL_WHEN_OPENING_DEVICE"
@@ -4607,4 +4686,8 @@ msgstr ""
 
 msgctxt "IDS_AG_DEFAULT"
 msgid "Default"
+msgstr ""
+
+msgctxt "IDS_CMD_THUMBNAILS"
+msgid "/thumbnails\tCreate thumbnails"
 msgstr ""

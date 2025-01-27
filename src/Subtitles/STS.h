@@ -33,14 +33,6 @@
 
 enum tmode { TIME, FRAME }; // the meaning of STSEntry::start/end
 
-class CSTSStyleMap : public CAtlMap<CString, STSStyle*, CStringElementTraits<CString>>
-{
-public:
-    CSTSStyleMap() {}
-    virtual ~CSTSStyleMap() { Free(); }
-    void Free();
-};
-
 struct STSEntry {
     CStringW str;
     bool fUnicode;
@@ -111,6 +103,7 @@ public:
     int m_scaledBAS; // -1 = unknown, 0 = no, 1 = yes
     CString m_sYCbCrMatrix;
 
+    bool m_bStyleOverrideActive;
     STSStyle m_originalDefaultStyle;
     bool m_bUsingPlayerDefaultStyle;
     uint32_t event_param;
@@ -152,11 +145,14 @@ public:
 
     void Add(CStringW str, bool fUnicode, REFERENCE_TIME start, REFERENCE_TIME end, CString style = _T("Default"), CString actor = _T(""), CString effect = _T(""), const CRect& marginRect = CRect(0, 0, 0, 0), int layer = 0, int readorder = -1);
     STSStyle* CreateDefaultStyle(int CharSet);
+    STSStyle GetOriginalDefaultStyle();
     void ChangeUnknownStylesToDefault();
     void AddStyle(CString name, STSStyle* style); // style will be stored and freed in Empty() later
+    bool CopyToStyles(CSTSStyleMap& styles);
     bool CopyStyles(const CSTSStyleMap& styles, bool fAppend = false);
 
     bool SetDefaultStyle(const STSStyle& s);
+    void SetStyleChanged();
     bool GetDefaultStyle(STSStyle& s) const;
 
     void ConvertToTimeBased(double fps);
@@ -174,6 +170,7 @@ public:
     }
 
     STSStyle* GetStyle(int i);
+    static void UpdateSubRelativeTo(Subtitle::SubType type, STSStyle::RelativeTo& relativeTo);
     bool GetStyle(int i, STSStyle& stss);
     bool GetStyle(CString styleName, STSStyle& stss);
     int GetCharSet(int charSet);
@@ -190,7 +187,6 @@ public:
     void SetOpenTypeLangHint(CStringA openTypeLangHint) { this->openTypeLangHint = openTypeLangHint; }
 
 public:
-    STSStyle m_styleOverride; // the app can decide to use this style instead of a built-in one
 #if USE_LIBASS
     LibassContext m_LibassContext;
 #endif

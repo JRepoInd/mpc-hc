@@ -229,6 +229,7 @@
 #define ID_STREAM_SUB_NEXT              954
 #define ID_STREAM_SUB_PREV              955
 #define ID_STREAM_SUB_ONOFF             956
+#define ID_AUDIOSHIFT_ONOFF             960
 #define ID_DVD_ANGLE_NEXT               961
 #define ID_DVD_ANGLE_PREV               962
 #define ID_DVD_AUDIO_NEXT               963
@@ -310,12 +311,13 @@
 #define ID_PLAY_PLAYBACKRATE_FPS25      5021
 #define ID_PLAY_PLAYBACKRATE_END        5029
 #define ID_PLAYLIST_TOGGLE_SHUFFLE      5030
+#define ID_CMDLINE_SAVE_THUMBNAILS      5031
+#define ID_MOUSE_ADD_CMD                5032
 #define IDS_FILTER_SETTINGS_CAPTION     7000
 #define IDD_OPEN_DLG                    10000
 #define IDD_MEDIATYPES_DLG              10002
 #define IDD_SAVE_DLG                    10004
 #define IDD_SUBTITLEDL_DLG              10005
-#define IDD_SUBTITLEUP_DLG              10006
 #define IDD_FILEPROPDETAILS             10010
 #define IDD_FILEPROPCLIP                10011
 #define IDD_PNSPRESET_DLG               10015
@@ -342,14 +344,11 @@
 #define IDD_PPAGETHEME                  10038
 #define IDD_PPAGEOUTPUT                 10039
 #define IDD_PPAGEWEBSERVER              10040
-#define IDD_SAVETEXTFILEDIALOGTEMPL     10043
-#define IDD_SAVESUBTITLESFILEDIALOGTEMPL 10044
 #define IDD_CAPTURE_DLG                 10045
 #define IDD_ADDREGFILTER                10046
 #define IDD_SELECTMEDIATYPE             10047
 #define IDD_COMPROPERTYPAGE             10048
 #define IDD_FILEPROPRES                 10049
-#define IDD_SAVETHUMBSDIALOGTEMPL       10050
 #define IDD_PPAGEMISC                   10052
 #define IDD_FILEMEDIAINFO               10053
 #define IDD_PPAGECAPTURE                10054
@@ -357,6 +356,7 @@
 #define IDD_PPAGEFULLSCREEN             10056
 #define IDD_RFS_FILELIST_EXT            10057
 #define IDD_PPAGEAUDIORENDERER          10058
+#define IDD_PPAGEMOUSE                  10059
 #define IDC_COMBO1                      11000
 #define IDC_COMBO2                      11001
 #define IDC_COMBO3                      11002
@@ -455,7 +455,7 @@
 #define IDC_STATIC8                     11267
 #define IDC_STATIC9                     11268
 #define IDC_STATIC10                    11269
-#define IDC_STATIC_BALANCE              11270
+#define IDC_STATIC11                    11270
 #define IDC_DVDPATH                     12000
 #define IDC_SUBRESYNCLIST               12001
 #define IDC_PLAYLIST                    12002
@@ -469,6 +469,7 @@
 #define IDC_PLACEHOLDER                 12010
 #define IDC_REPORT                      12011
 #define IDC_FROMTO                      12012
+#define IDC_STATIC_BALANCE              12013
 #define IDC_LOGOPREVIEW                 12014
 #define IDC_LOGOFILENAME                12016
 #define IDC_AUTHOR                      12018
@@ -510,6 +511,7 @@
 #define IDS_INTERNAL_LAVF               14004
 #define IDS_INTERNAL_LAVF_WMV           14005
 #define IDS_AG_OPEN_FILE_LOCATION       14006
+#define IDS_AG_OPENDIRECTORY            14007
 #define IDS_PLAYLIST_OPEN               14114
 #define IDS_PLAYLIST_ADD                14115
 #define IDS_PLAYLIST_REMOVE             14116
@@ -550,7 +552,7 @@
 #define IDS_SUBTITLES_OPTIONS           14165
 #define IDS_SUBTITLES_STYLES            14166
 #define IDS_SUBTITLES_RELOAD            14167
-#define IDS_SUBTITLES_ENABLE            14168
+#define IDS_SUBTITLES_HIDE              14168
 #define IDS_PANSCAN_EDIT                14169
 #define IDS_INFOBAR_TITLE               14170
 #define IDS_INFOBAR_AUTHOR              14171
@@ -570,7 +572,7 @@
 #define IDS_AUTOPLAY_PLAYDVDMOVIE       14185
 #define IDS_PROPSHEET_PROPERTIES        14186
 #define IDS_PLAY_LOOPMODE_FILE          14187
-#define IDS_SUBTITLES_DEFAULT_STYLE     14188
+#define IDS_SUB_OVERRIDE_DEFAULT_STYLE  14188
 #define IDS_PLAY_LOOPMODE_PLAYLIST      14189
 #define IDS_FAVFILES                    14190
 #define IDS_FAVDVDS                     14191
@@ -598,6 +600,7 @@
 #define IDS_THEMEMODE_DARK              14213
 #define IDS_THEMEMODE_LIGHT             14214
 #define IDS_THEMEMODE_WINDOWS           14215
+#define IDS_SUB_OVERRIDE_ALL_STYLES     14216
 #define IDD_TUNER_SCAN                  20002
 #define IDS_OSD_DISPLAY_RENDERER_STATS  20003
 #define IDD_PPAGELOGO2                  20003
@@ -612,11 +615,11 @@
 #define IDF_WIN7_TOOLBAR                20012
 #define IDD_DEBUGSHADERS_DLG            20013
 #define IDD_PPAGEADVANCED               20014
-#define IDD_SAVEIMAGEDIALOGTEMPL        20015
 #define IDD_CMD_LINE_HELP               20016
 #define IDD_CRASH_REPORTER              20017
 #define IDD_PPAGEDPICALC                20018
 #define IDD_RAR_ENTRY_SELECTOR          20019
+#define IDD_ADDCOMMAND_DLG              20020
 #define IDB_DT_CB_96                    20050
 #define IDB_DT_CB_120                   20051
 #define IDB_DT_CB_144                   20052
@@ -741,7 +744,7 @@
 #define ID_VIEW_MPCTHEME                24045
 #define PLAYER_PLAYLIST_UPDATE_SCROLLBAR 24048
 #define IDF_LOGO4                       24050
-#define ID_SUBTITLES_DEFAULT_STYLE      24051
+#define ID_SUBTITLES_OVERRIDE_DEFAULT_STYLE 24051
 #define ID_SUB_POS_DOWN                 24052
 #define ID_SUB_POS_UP                   24053
 #define ID_SUB_FONT_SIZE_DEC            24054
@@ -1115,12 +1118,12 @@
 #define IDS_MFMT_FLV                    39011
 #define IDS_MFMT_OGM                    39012
 #define IDS_MFMT_RM                     39013
-#define IDS_MFMT_RT                     39014
 #define IDS_MFMT_WMV                    39015
 #define IDS_MFMT_BINK                   39018
 #define IDS_MFMT_FLIC                   39019
 #define IDS_MFMT_DSM                    39020
 #define IDS_MFMT_IVF                    39021
+#define IDS_MFMT_AVS                    39022
 #define IDS_MFMT_OTHER                  39401
 #define IDS_MFMT_SWF                    39403
 #define IDS_MFMT_OTHER_AUDIO            39404
@@ -1456,6 +1459,16 @@
 #define IDS_NAVIGATE_CHANNELS           41465
 #define IDS_PPAGE_OUTPUT_MPCVR          41466
 #define IDS_PPAGE_OUTPUT_VMR7           41467
+#define IDS_MOUSE_CLICK_MIDDLE          41702
+#define IDS_MOUSE_CLICK_X1              41703
+#define IDS_MOUSE_CLICK_X2              41704
+#define IDS_MOUSE_WHEEL_UP              41705
+#define IDS_MOUSE_WHEEL_DOWN            41706
+#define IDS_MOUSE_WHEEL_LEFT            41707
+#define IDS_MOUSE_WHEEL_RIGHT           41708
+#define IDS_MOUSE_ACTION                41710
+#define IDS_MOUSE_COMMAND               41711
+#define IDS_MOUSE_RIGHT_BUTTON          41712
 #define IDS_PPAGE_CAPTURE_FG0           57345
 #define IDS_PPAGE_CAPTURE_FG1           57346
 #define IDS_PPAGE_CAPTURE_FG2           57347
@@ -1698,7 +1711,7 @@
 #define IDS_SUBTITLE_RENDERER_NONE      57632
 #define IDS_PPAGEADVANCED_MOUSE_LEFTUP_DELAY 57633
 #define IDS_PPAGEADVANCED_USE_FREETYPE  57634
-#define IDS_PPAGEADVANCED_USE_MEDIAINFO_LOAD_FILE_DURATION  57635
+#define IDS_PPAGEADVANCED_USE_MEDIAINFO_LOAD_FILE_DURATION 57635
 #define IDS_TIMER_SHOW_PERCENTAGE       57636
 #define IDS_SUBDL_DLG_FAILED_DL         57637
 #define IDS_PPAGEADVANCED_FILEPOS_PLAYLIST 57638
@@ -1707,9 +1720,15 @@
 #define IDS_PPAGEADVANCED_PREVENT_DISPLAY_SLEEP 57641
 #define IDS_PPAGEADVANCED_STILL_VIDEO_DURATION 57642
 #define IDS_PPAGEADVANCED_CAPTURE_DEINTERLACE 57643
-#define IDS_PLAYLIST_TOGGLE_SHUFFLE 57644
-
-
+#define IDS_PLAYLIST_TOGGLE_SHUFFLE     57644
+#define IDS_AUDIOSHIFT_ONOFF            57645
+#define IDS_SAVEDIALOG_INCLUDE_SUBS     57646
+#define IDS_PPAGEADVANCED_PAUSE_WHILE_DRAGGING_SEEKBAR 57647
+#define IDS_CMD_THUMBNAILS              57648
+#define IDS_PPAGEADVANCED_CONFIRM_FILE_DELETE 57649
+#define IDS_PPAGEADVANCED_LIBASS_FOR_SRT 57650
+#define IDS_CMD_AB_START                57651
+#define IDS_CMD_AB_END                  57652
 #define IDS_ARS_WASAPI_MODE             57700
 #define IDS_ARS_EXCLUSIVE               57701
 #define IDS_ARS_SHARED                  57702

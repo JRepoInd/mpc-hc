@@ -28,6 +28,7 @@
 #include "ColorProfileUtil.h"
 #include "resource.h"
 #include "Translations.h"
+#include "WinAPIUtils.h"
 
 // CPPageTheme dialog
 
@@ -39,9 +40,10 @@ CPPageTheme::CPPageTheme()
     , m_iThemeMode(0)
     , m_nPosLangEnglish(0)
     , m_iDefaultToolbarSize(DEF_TOOLBAR_HEIGHT)
-    , m_fUseSeekbarHover(TRUE)
     , m_nOSDSize(0)
     , m_fShowChapters(TRUE)
+    , m_bShowPreview(FALSE)
+    , m_bShowTime(TRUE)
     , m_iSeekPreviewSize(15)
     , m_fShowOSD(FALSE)
     , m_fShowCurrentTimeInOSD(FALSE)
@@ -83,8 +85,6 @@ void CPPageTheme::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_COMBO5, m_FontType);
     DDX_Control(pDX, IDC_COMBO6, m_FontSize);
 
-    DDX_Check(pDX, IDC_CHECK8, m_fUseSeekbarHover);
-    DDX_Control(pDX, IDC_SEEK_PREVIEW, m_HoverType);
     DDX_Text(pDX, IDC_EDIT4, m_iSeekPreviewSize);
     DDX_Control(pDX, IDC_EDIT4, m_SeekPreviewSizeEdit);
     DDX_Control(pDX, IDC_SPIN2, m_SeekPreviewSizeCtrl);
@@ -103,6 +103,10 @@ void CPPageTheme::DoDataExchange(CDataExchange* pDX)
     DDX_Check(pDX, IDC_CHECK3, m_bShowLangInStatusbar);
     DDX_Check(pDX, IDC_CHECK5, m_bShowFPSInStatusbar);
     DDX_Check(pDX, IDC_CHECK6, m_bShowABMarksInStatusbar);
+    DDX_Check(pDX, IDC_SEEK_PREVIEW, m_bShowPreview);
+    DDX_Check(pDX, IDC_CHECK14, m_bShowTime);
+
+    DDX_Control(pDX, IDC_CHECK14, m_ShowTimeCtrl);
 
     DDX_Check(pDX, IDC_CHECK7, m_fLimitWindowProportions);
     DDX_Check(pDX, IDC_CHECK9, m_fSnapToDesktopEdges);
@@ -113,7 +117,8 @@ void CPPageTheme::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CPPageTheme, CMPCThemePPageBase)
-    ON_BN_CLICKED(IDC_CHECK8, OnHoverClicked)
+    ON_BN_CLICKED(IDC_SEEK_PREVIEW, OnPreviewClicked)
+    ON_BN_CLICKED(IDC_CHECK14, OnTimeClicked)
     ON_BN_CLICKED(IDC_CHECK1, OnThemeClicked)
     ON_NOTIFY_EX(TTN_NEEDTEXT, 0, OnToolTipNotify)
     ON_CBN_SELCHANGE(IDC_COMBO5, OnChngOSDCombo)
@@ -149,7 +154,6 @@ BOOL CPPageTheme::OnInitDialog()
     m_ThemeMode.AddString(ResStr(IDS_THEMEMODE_DARK));
     m_ThemeMode.AddString(ResStr(IDS_THEMEMODE_LIGHT));
     m_ThemeMode.AddString(ResStr(IDS_THEMEMODE_WINDOWS));
-    CorrectComboListWidth(m_ThemeMode);
 
     for (auto& lr : Translations::GetAvailableLanguageResources()) {
         int pos = m_langsComboBox.AddString(lr.name);
@@ -165,26 +169,18 @@ BOOL CPPageTheme::OnInitDialog()
             ASSERT(FALSE);
         }
     }
-    CorrectComboListWidth(m_langsComboBox);
-
-    m_fUseSeekbarHover = s.fUseSeekbarHover;
 
     m_HoverPosition.AddString(ResStr(IDS_TIME_TOOLTIP_ABOVE));
     m_HoverPosition.AddString(ResStr(IDS_TIME_TOOLTIP_BELOW));
     m_HoverPosition.SetCurSel(s.nHoverPosition);
-    AdjustDynamicWidth(this, IDC_CHECK8, IDC_COMBO3, DynamicAlignCheckBox, DynamicAlignCombo);
-    CorrectComboListWidth(m_HoverPosition);
 
     m_nOSDSize = s.nOSDSize;
     m_strOSDFont = s.strOSDFont;
 
-    //m_fSeekPreview = s.fSeekPreview;
-    m_HoverType.AddString(ResStr(IDS_SEEKBAR_HOVER_TOOLTIP));
-    m_HoverType.AddString(ResStr(IDS_SEEKBAR_HOVER_PREVIEW));
-    m_HoverType.SetCurSel(s.fSeekPreview ? 1 : 0);
-    CorrectComboListWidth(m_HoverType);
+    m_bShowTime = s.fUseSeekbarHover;
+    m_bShowPreview = s.fSeekPreview && m_bShowTime;
 
-    HoverEnableSubControls(m_fUseSeekbarHover);
+    PreviewEnableSubControls(m_bShowPreview);
 
     m_iSeekPreviewSize = s.iSeekPreviewSize;
     m_SeekPreviewSizeCtrl.SetRange32(5, 40);
@@ -203,12 +199,16 @@ BOOL CPPageTheme::OnInitDialog()
         }
         m_FontType.AddString(fntl[i]);
     }
-    CorrectComboListWidth(m_FontType);
     int iSel = m_FontType.FindStringExact(0, m_strOSDFont);
     if (iSel == CB_ERR) {
         iSel = m_FontType.FindString(0, m_strOSDFont);
         if (iSel == CB_ERR) {
-            iSel = 0;
+            LOGFONT lf;
+            GetMessageFont(&lf);
+            iSel = m_FontType.FindStringExact(0, lf.lfFaceName);
+            if (iSel == CB_ERR) {
+                iSel = 0;
+            }
         }
     }
     m_FontType.SetCurSel(iSel);
@@ -236,6 +236,7 @@ BOOL CPPageTheme::OnInitDialog()
     m_bUseEnhancedTaskBar = s.bUseEnhancedTaskBar;
     m_bUseSMTC = s.bUseSMTC;
 
+    AdjustDynamicWidgets();
     CreateToolTip();
     EnableThemedDialogTooltips(this);
 
@@ -289,12 +290,15 @@ BOOL CPPageTheme::OnApply()
     }
     s.nHoverPosition = m_HoverPosition.GetCurSel();
 
-    s.fUseSeekbarHover = !!m_fUseSeekbarHover;
     s.nOSDSize = m_nOSDSize;
     m_FontType.GetLBText(m_FontType.GetCurSel(), s.strOSDFont);
+    if (s.strOSDFont.GetLength() >= LF_FACESIZE) {
+        s.strOSDFont = s.strOSDFont.Left(LF_FACESIZE - 1);
+    }
     s.fShowChapters = !!m_fShowChapters;
 
-    s.fSeekPreview = m_HoverType.GetCurSel() == 1;
+    s.fSeekPreview = !!m_bShowPreview;
+    s.fUseSeekbarHover = !!m_bShowTime;
     if (m_iSeekPreviewSize < 5) m_iSeekPreviewSize = 5;
     if (m_iSeekPreviewSize > 40) m_iSeekPreviewSize = 40;
     CMainFrame* pFrame = ((CMainFrame*)GetParentFrame());
@@ -333,15 +337,25 @@ BOOL CPPageTheme::OnApply()
     return __super::OnApply();
 }
 
-void CPPageTheme::HoverEnableSubControls(bool hoverEnabled) {
-    m_HoverPosition.EnableWindow(hoverEnabled);
-    m_HoverType.EnableWindow(hoverEnabled);
-    m_SeekPreviewSizeEdit.EnableWindow(hoverEnabled);
-    m_SeekPreviewSizeCtrl.EnableWindow(hoverEnabled);
+void CPPageTheme::PreviewEnableSubControls(bool previewEnabled) {
+    if (previewEnabled) { //there is no need to disable because time will still be checked if we are disabling
+        m_HoverPosition.EnableWindow(TRUE);
+    }
+    m_ShowTimeCtrl.EnableWindow(!previewEnabled);
+    if (previewEnabled) {
+        m_ShowTimeCtrl.SetCheck(1);
+    }
+    m_SeekPreviewSizeEdit.EnableWindow(previewEnabled);
+    m_SeekPreviewSizeCtrl.EnableWindow(previewEnabled);
 }
 
-void CPPageTheme::OnHoverClicked() {
-    HoverEnableSubControls(IsDlgButtonChecked(IDC_CHECK8));
+void CPPageTheme::OnPreviewClicked() {
+    PreviewEnableSubControls(IsDlgButtonChecked(IDC_SEEK_PREVIEW));
+    SetModified();
+}
+
+void CPPageTheme::OnTimeClicked() {
+    m_HoverPosition.EnableWindow(IsDlgButtonChecked(IDC_CHECK14));
     SetModified();
 }
 
@@ -390,4 +404,15 @@ void CPPageTheme::OnChngOSDCombo() {
         pMainFrame->m_OSD.DisplayMessage(OSD_TOPLEFT, _T("Test"), 2000, m_nOSDSize, str);
     }
     SetModified();
+}
+
+void CPPageTheme::AdjustDynamicWidgets() {
+    AdjustDynamicWidgetPair(this, IDC_STATIC22, IDC_MODERNSEEKBARHEIGHT);
+    AdjustDynamicWidgetPair(this, IDC_STATIC3, IDC_EDIT1);
+    AdjustDynamicWidgetPair(this, IDC_STATIC2, IDC_COMBO1);
+    AdjustDynamicWidgetPair(this, IDC_STATIC5, IDC_COMBO2);
+    AdjustDynamicWidgetPair(this, IDC_STATIC11, IDC_COMBO3);
+    AdjustDynamicWidgetPair(this, IDC_STATIC7, IDC_EDIT4);
+    AdjustDynamicWidgetPair(this, IDC_STATIC6, IDC_COMBO5);
+    AdjustDynamicWidgetPair(this, IDC_STATIC23, IDC_COMBO6);
 }

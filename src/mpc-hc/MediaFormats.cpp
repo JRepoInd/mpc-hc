@@ -182,8 +182,7 @@ void CMediaFormats::UpdateData(bool fSave)
         ADDFMT((_T("3gp"),         StrRes(IDS_MFMT_3GP),         _T("3gp 3gpp 3g2 3gp2")));
         ADDFMT((_T("flv"),         StrRes(IDS_MFMT_FLV),         _T("flv f4v")));
         ADDFMT((_T("ogm"),         StrRes(IDS_MFMT_OGM),         _T("ogm ogv")));
-        ADDFMT((_T("rm"),          StrRes(IDS_MFMT_RM),          _T("rm rmvb")));
-        ADDFMT((_T("rt"),          StrRes(IDS_MFMT_RT),          _T("rt ram rpm rmm rp smi smil")));
+        ADDFMT((_T("rm"),          StrRes(IDS_MFMT_RM),          _T("rm rmvb ram")));
         ADDFMT((_T("wmv"),         StrRes(IDS_MFMT_WMV),         _T("wmv wmp wm asf")));
         ADDFMT((_T("bink"),        StrRes(IDS_MFMT_BINK),        _T("smk bik")));
         ADDFMT((_T("flic"),        StrRes(IDS_MFMT_FLIC),        _T("fli flc flic")));
@@ -222,6 +221,7 @@ void CMediaFormats::UpdateData(bool fSave)
         ADDFMT((_T("cue"),         _T("Cue sheet"),              _T("cue")));
         ADDFMT((_T("swf"),         StrRes(IDS_MFMT_SWF),         _T("swf")));
         ADDFMT((_T("rar"),         StrRes(IDS_MFMT_RAR),         _T("rar"), false, false));
+        ADDFMT((_T("avs"),         StrRes(IDS_MFMT_AVS),         _T("avs"), false, false));
 #undef ADDFMT
     }
 

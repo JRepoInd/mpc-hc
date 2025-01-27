@@ -120,8 +120,10 @@ void ParseSrtLine(std::string& srtLine, const STSStyle& style) {
                         } else if (attribute_name == "family") {
                         }
                         if (attribute_name == "size") {
-                            int font_size = (int)std::round(std::stod(attribute_value));
-                            subtitle_output.append("{\\fs" + std::to_string(font_size) + "}");
+                            try {
+                                int font_size = (int)std::round(std::stod(attribute_value));
+                                subtitle_output.append("{\\fs" + std::to_string(font_size) + "}");
+                            } catch (...) {}
                         } else if (attribute_name == "color") {
                             MatchColorSrt(attribute_value);
 
@@ -376,11 +378,23 @@ ASS_Track* srt_read_data(ASS_Library* library, ASS_Track* track, std::istream &s
     return track;
 }
 
-ASS_Track* ass_read_fileW(ASS_Library* library, CStringW fname) {
+ASS_Track* ass_read_fileW(ASS_Library* library, CStringW fname, const STSStyle& style) {
     std::ifstream t(fname, std::ios::in);
     std::stringstream buffer;
     buffer << t.rdbuf();
-    return ass_read_memory(library, (char*)buffer.str().c_str(), buffer.str().size(), "UTF-8");
+    auto str = buffer.str();
+
+    ASS_Track* track = ass_read_memory(library, (char*)str.c_str(), str.size(), "UTF-8");
+    if (!track) { //failed, try ansi file encoding
+        if (style.charSet == 0) {
+            track = ass_read_memory(library, (char*)str.c_str(), str.size(), 0);
+        } else {
+            DWORD cp = CharSetToCodePage(style.charSet);
+            std::string cpString = "CP" + std::to_string(cp);
+            track = ass_read_memory(library, (char*)str.c_str(), str.size(), (char*)cpString.c_str());
+        }
+    }
+    return track;
 }
 
 void ConvertCPToUTF8(int charset, std::string& codepage_str) {
@@ -656,14 +670,42 @@ static void detect_style_changes(STSStyle* before, STSStyle* after, const wchar_
     }
 }
 
-void LibassContext::DefaultStyleChanged() {
+void LibassContext::StylesChanged() {
     if (!m_assloaded) {
         ASSERT(false);
         return;
     }
 
-    if (m_STS->m_subtitleType == Subtitle::SubType::SRT || m_STS->m_SubRendererSettings.overrideDefaultStyle) {
-        std::vector<CStringA> styles_overrides;
+    std::vector<CStringA> styles_overrides;
+    POSITION pos = m_STS->m_styles.GetStartPosition();
+    for (int k = 0; pos; k++) {
+        CString styleName;
+        STSStyle* style;
+        m_STS->m_styles.GetNextAssoc(pos, styleName, style);
+        if (styleName != L"Default" && origStyles.Lookup(styleName)) {
+            detect_style_changes(origStyles[styleName], style, nullptr, styles_overrides);
+        }
+    }
+    bool hadStyleOverrides = hasStyleOverrides;
+    hasStyleOverrides = styles_overrides.size() > 0;
+
+    bool need_override = hasStyleOverrides || m_STS->m_subtitleType == Subtitle::SubType::SRT || m_STS->m_SubRendererSettings.overrideDefaultStyle || m_STS->m_SubRendererSettings.overrideAllStyles || m_bOverrideDefaultStyleActive && !m_bOverrideAllStylesActive;
+    bool need_reload = !need_override && (m_bOverrideDefaultStyleActive || m_bOverrideAllStylesActive || hadStyleOverrides) || m_bOverrideAllStylesActive && !m_STS->m_SubRendererSettings.overrideAllStyles;
+
+    if (need_reload) {
+        m_bOverrideDefaultStyleActive = false;
+        m_bOverrideAllStylesActive = false;
+
+        // Reload to get original styles back
+        if (!m_STS->m_path.IsEmpty()) {
+            LoadASSFile(m_STS->m_subtitleType);
+        } else if (!m_trackData.empty()) {
+            // note: buffered embedded subs will be discarded, so it will take a few seconds or a seek to show subs again
+            LoadASSTrack((char*)m_trackData.c_str(), m_trackData.length(), m_STS->m_subtitleType);
+        }
+    }
+
+    if (need_override) {
 
         if (m_STS->m_subtitleType == Subtitle::SubType::SRT) {
             STSStyle defStyle = m_STS->m_SubRendererSettings.defaultStyle;
@@ -671,9 +713,19 @@ void LibassContext::DefaultStyleChanged() {
                 return;
             }
             detect_style_changes(nullptr, &defStyle, nullptr, styles_overrides);
-        } else if (m_STS->m_SubRendererSettings.overrideDefaultStyle) {
+        } else if (m_STS->m_SubRendererSettings.overrideAllStyles) {
             STSStyle defStyle = m_STS->m_SubRendererSettings.defaultStyle;
             detect_style_changes(nullptr, &defStyle, nullptr, styles_overrides);
+            m_bOverrideAllStylesActive = true;
+        } else if (m_STS->m_SubRendererSettings.overrideDefaultStyle) {
+            STSStyle defStyle = m_STS->m_SubRendererSettings.defaultStyle;
+            detect_style_changes(nullptr, &defStyle, L"Default", styles_overrides);
+            m_bOverrideDefaultStyleActive = true;
+        } else if (m_bOverrideDefaultStyleActive) {
+            // this is the original default style
+            STSStyle defStyle = m_STS->m_SubRendererSettings.defaultStyle;
+            detect_style_changes(nullptr, &defStyle, L"Default", styles_overrides);
+            m_bOverrideDefaultStyleActive = false;
         }
 
         std::unique_ptr<char* []> tmp = std::make_unique<char* []>(styles_overrides.size() + 1);
@@ -685,23 +737,17 @@ void LibassContext::DefaultStyleChanged() {
         ass_set_style_overrides(m_ass.get(), tmp.get());
         ass_process_force_style(m_track.get());
 
-    } else {
-        // this doesn't seem to have effect
-        ass_set_style_overrides(m_ass.get(), NULL);
-        ass_process_force_style(m_track.get());
-
-        // Reload to get original styles back
-        if (!m_STS->m_path.IsEmpty()) {
-            LoadASSFile(m_STS->m_subtitleType);
-        } else if (!m_trackData.empty()) {
-            LoadASSTrack((char*)m_trackData.c_str(), m_trackData.length(), m_STS->m_subtitleType);
-        }
+        // workaround to clear caches, no direct way to do that?
+        ass_set_selective_style_override_enabled(m_renderer.get(), 0);
+        ass_set_selective_style_override_enabled(m_renderer.get(), 2);
     }
 }
 
 
 void LibassContext::InitLibASS() {
     Unload();
+    m_STS->CopyToStyles(origStyles);
+    hasStyleOverrides = false;
     m_assfontloaded = false;
     m_ass = decltype(m_ass)(ass_library_init());
     ass_set_fonts_dir(m_ass.get(), NULL); //initialize it or we get free() errors in debug mode
@@ -728,7 +774,7 @@ bool LibassContext::LoadASSFile(Subtitle::SubType subType) {
     if (subType == Subtitle::SRT) {
         m_track = decltype(m_track)(srt_read_file(m_ass.get(), m_STS->m_path, defStyle, m_STS->m_SubRendererSettings.openTypeLangHint));
     } else { //subType == Subtitle::SSA/ASS
-        m_track = decltype(m_track)(ass_read_fileW(m_ass.get(), m_STS->m_path));
+        m_track = decltype(m_track)(ass_read_fileW(m_ass.get(), m_STS->m_path, defStyle));
     }
 
     if (!m_track) return false;
@@ -794,6 +840,7 @@ void LibassContext::LoadASSFont() {
             if (SUCCEEDED(bag->ResGet(i, &name.GetBSTR(), &desc.GetBSTR(), &mime.GetBSTR(), &pData, &len, nullptr))) {
                 if (wcscmp(mime.GetBSTR(), L"application/x-truetype-font") == 0 // see https://gitlab.com/mbunkus/mkvtoolnix/-/issues/3137
                     || wcscmp(mime.GetBSTR(), L"application/vnd.ms-opentype") == 0
+                    || wcscmp(mime.GetBSTR(), L"application/x-font-otf") == 0
                     || wcscmp(mime.GetBSTR(), L"application/x-font-ttf") == 0
                     || wcscmp(mime.GetBSTR(), L"application/font-sfnt") == 0
                     || wcscmp(mime.GetBSTR(), L"font/otf") == 0
@@ -817,8 +864,9 @@ void LibassContext::LoadASSFont() {
 
 CRect LibassContext::GetSPDRect(SubPicDesc& spd) {
     CRect spdRect;
-    if (m_STS->m_subtitleType == Subtitle::SubType::SRT && m_STS->m_SubRendererSettings.defaultStyle.relativeTo != STSStyle::VIDEO
-        || m_STS->m_SubRendererSettings.defaultStyle.relativeTo == STSStyle::WINDOW) {
+    auto relativeTo = m_STS->m_SubRendererSettings.defaultStyle.relativeTo;
+    CSimpleTextSubtitle::UpdateSubRelativeTo(m_STS->m_subtitleType, relativeTo);
+    if (relativeTo == STSStyle::WINDOW) {
         spdRect = CRect(0, 0, spd.w, spd.h);
     } else {
         spdRect = CRect(spd.vidrect);
@@ -871,9 +919,10 @@ STDMETHODIMP LibassContext::Render(REFERENCE_TIME rt, SubPicDesc& spd, RECT& bbo
     return E_POINTER;
 }
 
-void AlphaBlendToInverted(const BYTE* src, int w, int h, int pitch, BYTE* dst, int dst_pitch) {
+void AlphaBlendToInverted(const BYTE* src, int w, int h, int pitch, int srcXOffset, int srcYOffset, BYTE* dst, int dst_pitch) {
+    src += srcYOffset * pitch;
     for (int i = 0; i < h; i++, src += pitch, dst += dst_pitch) {
-        const BYTE* s2 = src;
+        const BYTE* s2 = src + srcXOffset;
         const BYTE* s2end = s2 + w * 4;
         DWORD* d2 = (DWORD*)dst;
         for (; s2 < s2end; s2 += 4, d2++) {
@@ -897,6 +946,7 @@ bool LibassContext::RenderFrame(long long now, SubPicDesc& spd, CRect& rcDirty) 
     CRect curSPDRect = CRect(0, 0, spd.w, spd.h);
     if (changed || curSPDRect != lastSPDRect) {
         AssFlattenSSE2(image, spd, rcDirty);
+        lastUncroppedDirty = rcDirty;
         rcDirty.IntersectRect(rcDirty, curSPDRect);
 
         lastDirty = rcDirty;
@@ -906,7 +956,7 @@ bool LibassContext::RenderFrame(long long now, SubPicDesc& spd, CRect& rcDirty) 
     }
 
     BYTE* pixelBytes = (BYTE*)(spd.bits + spd.pitch * rcDirty.top + rcDirty.left * 4);
-    AlphaBlendToInverted(reinterpret_cast<uint8_t*>(m_pixels.get()), rcDirty.Width(), rcDirty.Height(), 4 * rcDirty.Width(), pixelBytes, spd.pitch);
+    AlphaBlendToInverted(reinterpret_cast<uint8_t*>(m_pixels.get()), rcDirty.Width(), rcDirty.Height(), 4 * lastUncroppedDirty.Width(), 4 * (rcDirty.left - lastUncroppedDirty.left), rcDirty.top - lastUncroppedDirty.top, pixelBytes, spd.pitch);
     return true;
 }
 

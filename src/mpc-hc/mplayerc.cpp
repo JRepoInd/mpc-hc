@@ -48,6 +48,7 @@
 #include "FGFilterLAV.h"
 #include "CMPCThemeMsgBox.h"
 #include "version.h"
+#include "psapi.h"
 
 HICON LoadIcon(CString fn, bool bSmallIcon, DpiHelper* pDpiHelper/* = nullptr*/)
 {
@@ -547,9 +548,9 @@ CString GetContentType(CString fn, CAtlList<CString>* redir)
     return content;
 }
 
-WORD AssignedToCmd(UINT keyOrMouseValue, bool bCheckMouse)
+WORD AssignedToCmd(UINT keyValue)
 {
-    if (keyOrMouseValue == 0) {
+    if (keyValue == 0) {
         ASSERT(false);
         return 0;
     }
@@ -557,28 +558,11 @@ WORD AssignedToCmd(UINT keyOrMouseValue, bool bCheckMouse)
     WORD assignTo = 0;
     const CAppSettings& s = AfxGetAppSettings();
 
-    BYTE mouseVirt = 0;
-    if (bCheckMouse) {
-        if (GetKeyState(VK_SHIFT) & 0x8000) {
-            mouseVirt |= FSHIFT;
-        }
-        if (GetKeyState(VK_MENU) & 0x8000) {
-            mouseVirt |= FALT;
-        }
-        if (GetKeyState(VK_CONTROL) & 0x8000) {
-            mouseVirt |= FCONTROL;
-        }
-    }
-
     POSITION pos = s.wmcmds.GetHeadPosition();
     while (pos && !assignTo) {
         const wmcmd& wc = s.wmcmds.GetNext(pos);
 
-        if (bCheckMouse) {
-            if (wc.mouse == keyOrMouseValue && (wc.mouseVirt & ~FVIRTKEY) == mouseVirt) {
-                assignTo = wc.cmd;
-            }
-        } else if (wc.key == keyOrMouseValue) {
+        if (wc.key == keyValue) {
             assignTo = wc.cmd;
         }
     }
@@ -602,6 +586,14 @@ std::map<CStringW, CStringW> GetAudioDeviceList() {
                 CStringW frname(var.bstrVal);
                 var.Clear();
                 friendlyname = frname;
+                if (SUCCEEDED(pPB->Read(_T("WaveOutId"), &var, nullptr))) {
+                    DWORD dw = var.intVal;
+                    var.Clear();
+                    if (dw != -1) { // skip default waveout
+                        friendlyname = L"WaveOut: " + friendlyname;
+                    }
+                    friendlyname.Append(L"  [Deprecated]");
+                }
             }
         } else {
             friendlyname = dispname;
@@ -1428,7 +1420,7 @@ bool CMPlayerCApp::SendCommandLine(HWND hWnd)
     cds.cbData = bufflen;
     cds.lpData = (void*)(BYTE*)buff;
 
-    return !!SendMessage(hWnd, WM_COPYDATA, (WPARAM)nullptr, (LPARAM)&cds);
+    return !!SendMessageTimeoutW(hWnd, WM_COPYDATA, (WPARAM)nullptr, (LPARAM)&cds, SMTO_ABORTIFHUNG | SMTO_NOTIMEOUTIFNOTHUNG, 5000, nullptr);
 }
 
 // CMPlayerCApp initialization
@@ -1464,6 +1456,134 @@ NTSTATUS WINAPI Mine_NtQueryInformationProcess(HANDLE ProcessHandle, PROCESSINFO
 
     return nRet;
 }
+
+#define USE_DLL_BLOCKLIST 0
+
+#if USE_DLL_BLOCKLIST
+#define STATUS_UNSUCCESSFUL ((NTSTATUS)0xC0000001L)
+
+typedef enum _SECTION_INHERIT { ViewShare = 1, ViewUnmap = 2 } SECTION_INHERIT;
+
+typedef enum _SECTION_INFORMATION_CLASS {
+    SectionBasicInformation = 0,
+    SectionImageInformation
+} SECTION_INFORMATION_CLASS;
+
+typedef struct _SECTION_BASIC_INFORMATION {
+    PVOID BaseAddress;
+    ULONG Attributes;
+    LARGE_INTEGER Size;
+} SECTION_BASIC_INFORMATION;
+
+typedef NTSTATUS(STDMETHODCALLTYPE* pfn_NtMapViewOfSection)(HANDLE, HANDLE, PVOID, ULONG_PTR, SIZE_T, PLARGE_INTEGER, PSIZE_T, SECTION_INHERIT, ULONG, ULONG);
+typedef NTSTATUS(STDMETHODCALLTYPE* pfn_NtUnmapViewOfSection)(HANDLE, PVOID);
+typedef NTSTATUS(STDMETHODCALLTYPE* pfn_NtQuerySection)(HANDLE, SECTION_INFORMATION_CLASS, PVOID, SIZE_T, PSIZE_T);
+typedef DWORD(STDMETHODCALLTYPE* pfn_GetMappedFileNameW)(HANDLE, LPVOID, LPWSTR, DWORD);
+
+static pfn_NtMapViewOfSection Real_NtMapViewOfSection = nullptr;
+static pfn_NtUnmapViewOfSection Real_NtUnmapViewOfSection = nullptr;
+static pfn_NtQuerySection Real_NtQuerySection = nullptr;
+static pfn_GetMappedFileNameW Real_GetMappedFileNameW = nullptr;
+
+typedef struct {
+    // DLL name, lower case, with backslash as prefix
+    const wchar_t* name;
+    size_t name_len;
+} blocked_module_t;
+
+// list of modules that can cause crashes or other unwanted behavior
+static blocked_module_t moduleblocklist[] = {
+#if WIN64
+    // Logitech codec
+    {_T("\\lvcod64.dll"), 12},
+    // ProxyCodec64
+    {_T("\\pxc0.dll"), 9},
+#else
+    {_T("\\mlc.dll"), 8},
+#endif
+    // Lame
+    {_T("\\lameacm.acm"), 12},
+    // ffdshow vfw
+    {_T("\\ff_vfw.dll"), 11},
+#if WIN64
+    // Trusteer Rapport
+    {_T("\\rooksbas_x64.dll"), 17},
+    {_T("\\rooksdol_x64.dll"), 17},
+    {_T("\\rapportgh_x64.dll"), 18},
+#endif
+    // ASUS GamerOSD
+    {_T("\\atkdx11disp.dll"), 16},
+    // ASUS GPU TWEAK II OSD
+    {_T("\\gtii-osd64.dll"), 15},
+    {_T("\\gtii-osd64-vk.dll"), 18},
+    {_T("\\gtiii-osd64.dll"), 16},
+    // Nahimic Audio
+    {L"\\nahimicmsidevprops.dll", 23},
+    {L"\\nahimicmsiosd.dll", 18},
+    // LoiLoGameRecorder
+    {_T("\\loilocap.dll"), 13},
+    // Other
+    {_T("\\tortoiseoverlays.dll"), 21},
+};
+
+bool IsBlockedModule(wchar_t* modulename)
+{
+    size_t mod_name_len = wcslen(modulename);
+
+    //TRACE(L"Checking module blocklist: %s\n", modulename);
+
+    for (size_t i = 0; i < _countof(moduleblocklist); i++) {
+        blocked_module_t* b = &moduleblocklist[i];
+        if (mod_name_len > b->name_len) {
+            wchar_t* dll_ptr = modulename + mod_name_len - b->name_len;
+            if (_wcsicmp(dll_ptr, b->name) == 0) {
+                //AfxMessageBox(modulename);
+                TRACE(L"Blocked module load: %s\n", modulename);
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+NTSTATUS STDMETHODCALLTYPE Mine_NtMapViewOfSection(HANDLE SectionHandle, HANDLE ProcessHandle, PVOID* BaseAddress, ULONG_PTR ZeroBits,  SIZE_T CommitSize,
+    PLARGE_INTEGER SectionOffset, PSIZE_T ViewSize, SECTION_INHERIT InheritDisposition, ULONG AllocationType, ULONG Win32Protect)
+{
+    NTSTATUS ret = Real_NtMapViewOfSection(SectionHandle, ProcessHandle, BaseAddress, ZeroBits, CommitSize, SectionOffset, ViewSize, InheritDisposition, AllocationType, Win32Protect);
+
+    // Verify map and process
+    if (ret < 0 || ProcessHandle != GetCurrentProcess())
+        return ret;
+
+    // Fetch section information
+    SIZE_T wrote = 0;
+    SECTION_BASIC_INFORMATION section_information;
+    if (Real_NtQuerySection(SectionHandle, SectionBasicInformation, &section_information, sizeof(section_information), &wrote) < 0)
+        return ret;
+
+    // Verify fetch was successful
+    if (wrote != sizeof(section_information))
+        return ret;
+
+    // We're not interested in non-image maps
+    if (!(section_information.Attributes & SEC_IMAGE))
+        return ret;
+
+    // Get the actual filename if possible
+    wchar_t fileName[MAX_PATH];
+    // ToDo: switch to PSAPI_VERSION=2 and directly use K32GetMappedFileNameW ?
+    if (Real_GetMappedFileNameW(ProcessHandle, *BaseAddress, fileName, _countof(fileName)) == 0)
+        return ret;
+
+    if (IsBlockedModule(fileName)) {
+        Real_NtUnmapViewOfSection(ProcessHandle, BaseAddress);
+        ret = STATUS_UNSUCCESSFUL;
+    }
+
+    return ret;
+}
+#endif
 
 static LONG Mine_ChangeDisplaySettingsEx(LONG ret, DWORD dwFlags, LPVOID lParam)
 {
@@ -1685,13 +1805,24 @@ BOOL CMPlayerCApp::InitInstance()
         AfxMessageBox(IDS_HOOKS_FAILED);
     }
 
+#if USE_DLL_BLOCKLIST
+    if (m_hNTDLL) {
+        Real_NtMapViewOfSection = (pfn_NtMapViewOfSection)GetProcAddress(m_hNTDLL, "NtMapViewOfSection");
+        Real_NtUnmapViewOfSection = (pfn_NtUnmapViewOfSection)GetProcAddress(m_hNTDLL, "NtUnmapViewOfSection");
+        Real_NtQuerySection = (pfn_NtQuerySection)GetProcAddress(m_hNTDLL, "NtQuerySection");
+        Real_GetMappedFileNameW = (pfn_GetMappedFileNameW)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "K32GetMappedFileNameW");
+        if (Real_NtMapViewOfSection && Real_NtUnmapViewOfSection && Real_NtQuerySection && Real_GetMappedFileNameW) {
+            VERIFY(Mhook_SetHookEx(&Real_NtMapViewOfSection, Mine_NtMapViewOfSection));
+        }
+    }
+#endif
+
     // If those hooks fail it's annoying but try to run anyway without reporting any error in release mode
     VERIFY(Mhook_SetHookEx(&Real_ChangeDisplaySettingsExA, Mine_ChangeDisplaySettingsExA));
     VERIFY(Mhook_SetHookEx(&Real_ChangeDisplaySettingsExW, Mine_ChangeDisplaySettingsExW));
     VERIFY(Mhook_SetHookEx(&Real_CreateFileA, Mine_CreateFileA)); // The internal splitter uses the right share mode anyway so this is no big deal
     VERIFY(Mhook_SetHookEx(&Real_LockWindowUpdate, Mine_LockWindowUpdate));
     VERIFY(Mhook_SetHookEx(&Real_mixerSetControlDetails, Mine_mixerSetControlDetails));
-
     MH_EnableHook(MH_ALL_HOOKS);
 
     CFilterMapper2::Init();

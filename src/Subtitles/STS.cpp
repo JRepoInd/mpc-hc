@@ -1936,6 +1936,12 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
                 styleName.TrimLeft(_T('*'));
 
                 style->hasAnsiStyleName = !file->IsUnicode();
+
+                //for srt the default style is created by mpc-hc.  if they have a .style containing "Default" then we can assume the default is not desired
+                if (styleName == L"Default" && EndsWithNoCase(file->GetFilePath(), L".srt.style")) {
+                    ret.m_styles.RemoveKey(styleName);
+                }
+
                 ret.AddStyle(styleName, style);
             } catch (...) {
                 delete style;
@@ -2034,7 +2040,9 @@ bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
             fRet = true;
             below_script_info = false;
         } else if (entry == L"language") {
-            ret.openTypeLangHint = WToA(GetStrW(pszBuff, nBuffLength));
+            if (nBuffLength) {
+                ret.openTypeLangHint = WToA(GetStrW(pszBuff, nBuffLength));
+            }
         } else if (entry == L"fontname") {
             LoadUUEFont(file);
         } else if (entry == L"ycbcr matrix") {
@@ -2369,6 +2377,7 @@ CSimpleTextSubtitle::CSimpleTextSubtitle()
     , m_defaultWrapStyle(0)
     , m_collisions(0)
     , m_scaledBAS(-1)
+    , m_bStyleOverrideActive(false)
     , m_bUsingPlayerDefaultStyle(false)
     , m_ePARCompensationType(EPCTDisabled)
     , m_dPARCompensation(1.0)
@@ -2454,17 +2463,26 @@ void CSimpleTextSubtitle::Append(CSimpleTextSubtitle& sts, REFERENCE_TIME timeof
     CreateSegments();
 }
 
-void CSTSStyleMap::Free()
-{
-    POSITION pos = GetStartPosition();
+bool CSimpleTextSubtitle::CopyToStyles(CSTSStyleMap& styles) {
+    styles.Free();
+
+    POSITION pos = m_styles.GetStartPosition();
     while (pos) {
         CString key;
         STSStyle* val;
-        GetNextAssoc(pos, key, val);
-        delete val;
+        m_styles.GetNextAssoc(pos, key, val);
+
+        STSStyle* s = DEBUG_NEW STSStyle;
+        if (!s) {
+            return false;
+        }
+
+        *s = *val;
+
+        styles[key] = s;
     }
 
-    RemoveAll();
+    return true;
 }
 
 bool CSimpleTextSubtitle::CopyStyles(const CSTSStyleMap& styles, bool fAppend)
@@ -2663,6 +2681,11 @@ STSStyle* CSimpleTextSubtitle::CreateDefaultStyle(int CharSet)
     return ret;
 }
 
+STSStyle CSimpleTextSubtitle::GetOriginalDefaultStyle()
+{
+    return m_originalDefaultStyle;
+}
+
 void CSimpleTextSubtitle::ChangeUnknownStylesToDefault()
 {
     CAtlMap<CString, STSStyle*, CStringElementTraits<CString>> unknown;
@@ -2759,13 +2782,17 @@ bool CSimpleTextSubtitle::SetDefaultStyle(const STSStyle& s)
     bool changed = (s != m_SubRendererSettings.defaultStyle);
     if (changed) {
         m_SubRendererSettings.defaultStyle = s;
-#if USE_LIBASS
-        if (m_LibassContext.IsLibassActive()) {
-            m_LibassContext.DefaultStyleChanged();
-        }
-#endif
+        SetStyleChanged();
     }
     return true;
+}
+
+void CSimpleTextSubtitle::SetStyleChanged() {
+#if USE_LIBASS
+    if (m_LibassContext.IsLibassActive()) {
+        m_LibassContext.StylesChanged();
+    }
+#endif
 }
 
 bool CSimpleTextSubtitle::GetDefaultStyle(STSStyle& s) const
@@ -2954,7 +2981,8 @@ REFERENCE_TIME CSimpleTextSubtitle::TranslateSegmentEnd(int i, double fps)
 STSStyle* CSimpleTextSubtitle::GetStyle(int i)
 {
     STSStyle* style = nullptr;
-    m_styles.Lookup(GetAt(i).style, style);
+    CString stylename = GetAt(i).style;
+    m_styles.Lookup(stylename, style);
 
     if (!style) {
         m_styles.Lookup(_T("Default"), style);
@@ -2963,15 +2991,25 @@ STSStyle* CSimpleTextSubtitle::GetStyle(int i)
     return style;
 }
 
+void CSimpleTextSubtitle::UpdateSubRelativeTo(Subtitle::SubType type, STSStyle::RelativeTo& relativeTo) {
+    if (relativeTo == STSStyle::AUTO) {
+        if (type == Subtitle::ASS || type == Subtitle::SSA) {
+            relativeTo = STSStyle::VIDEO;
+        } else {
+            relativeTo = STSStyle::WINDOW;
+        }
+    }
+}
+
 bool CSimpleTextSubtitle::GetStyle(int i, STSStyle& stss)
 {
     STSStyle* style = nullptr;
     m_styles.Lookup(GetAt(i).style, style);
 
     STSStyle* defstyle = nullptr;
-    m_styles.Lookup(_T("Default"), defstyle);
 
     if (!style) {
+        m_styles.Lookup(_T("Default"), defstyle);
         if (!defstyle) {
             defstyle = CreateDefaultStyle(DEFAULT_CHARSET);
         }
@@ -2985,15 +3023,15 @@ bool CSimpleTextSubtitle::GetStyle(int i, STSStyle& stss)
     }
 
     stss = *style;
-    if (stss.relativeTo == STSStyle::AUTO && defstyle) {
-        stss.relativeTo = defstyle->relativeTo;
-        // If relative to is set to "auto" even for the default style, decide based on the subtitle type
-        if (stss.relativeTo == STSStyle::AUTO) {
-            if (m_subtitleType == Subtitle::ASS || m_subtitleType == Subtitle::SSA) {
-                stss.relativeTo = STSStyle::VIDEO;
-            } else {
-                stss.relativeTo = STSStyle::WINDOW;
-            }
+
+    if (stss.relativeTo == STSStyle::AUTO) {
+        if (!defstyle) {
+            m_styles.Lookup(_T("Default"), defstyle);
+        }
+        if (defstyle) {
+            stss.relativeTo = defstyle->relativeTo;
+            // If relative to is set to "auto" even for the default style, decide based on the subtitle type
+            UpdateSubRelativeTo(m_subtitleType, stss.relativeTo);
         }
     }
 
@@ -3010,17 +3048,13 @@ bool CSimpleTextSubtitle::GetStyle(CString styleName, STSStyle& stss)
 
     stss = *style;
 
-    STSStyle* defstyle = nullptr;
-    m_styles.Lookup(_T("Default"), defstyle);
-    if (defstyle && stss.relativeTo == STSStyle::AUTO) {
-        stss.relativeTo = defstyle->relativeTo;
-        // If relative to is set to "auto" even for the default style, decide based on the subtitle type
-        if (stss.relativeTo == STSStyle::AUTO) {
-            if (m_subtitleType == Subtitle::ASS || m_subtitleType == Subtitle::SSA) {
-                stss.relativeTo = STSStyle::VIDEO;
-            } else {
-                stss.relativeTo = STSStyle::WINDOW;
-            }
+    if (stss.relativeTo == STSStyle::AUTO) {
+        STSStyle* defstyle = nullptr;
+        m_styles.Lookup(_T("Default"), defstyle);
+        if (defstyle) {
+            stss.relativeTo = defstyle->relativeTo;
+            // If relative to is set to "auto" even for the default style, decide based on the subtitle type
+            UpdateSubRelativeTo(m_subtitleType, stss.relativeTo);
         }
     }
 
@@ -3699,6 +3733,11 @@ void STSStyle::SetDefault()
     fontShiftX = fontShiftY = fontAngleZ = fontAngleX = fontAngleY = 0;
     relativeTo = STSStyle::AUTO;
     hasAnsiStyleName = false;
+#if USE_LIBASS
+    Kerning = false;
+    ScaledBorderAndShadow = false;
+    customTags = L"";
+#endif
 }
 
 bool STSStyle::operator == (const STSStyle& s) const
@@ -3884,4 +3923,16 @@ static bool OpenRealText(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
     }
 
     return !ret.IsEmpty();
+}
+
+void CSTSStyleMap::Free() {
+    POSITION pos = GetStartPosition();
+    while (pos) {
+        CString key;
+        STSStyle* val;
+        GetNextAssoc(pos, key, val);
+        delete val;
+    }
+
+    RemoveAll();
 }

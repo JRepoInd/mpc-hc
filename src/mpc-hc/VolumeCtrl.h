@@ -45,6 +45,7 @@ protected:
     void updateModernVolCtrl(CPoint point);
     bool m_bDrag, m_bHover;
     bool modernStyle;
+    bool showPercentage;
     CMPCThemeToolTipCtrl themedToolTip;
 
     DECLARE_MESSAGE_MAP()
@@ -61,4 +62,6 @@ public:
     afx_msg void OnMouseMove(UINT nFlags, CPoint point);
     afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
     afx_msg void OnMouseLeave();
+    afx_msg void OnPaint();
+    afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 };

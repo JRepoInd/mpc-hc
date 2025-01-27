@@ -23,6 +23,7 @@
 
 #include <atlcoll.h>
 #include <string>
+#include <list>
 
 template<class T, typename SEP>
 T Explode(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
@@ -112,6 +113,40 @@ T ExplodeEsc(T str, CAtlList<T>& sl, SEP sep, size_t limit = 0, SEP esc = _T('\\
 }
 
 template<class T, typename SEP>
+std::enable_if_t<(std::is_same_v<T, CStringW> || std::is_same_v<T, CStringA>), T>
+ExplodeEsc(T str, std::list<T>& sl, SEP sep, size_t limit = 0, SEP esc = '\\') {
+    sl.clear();
+    if (str.IsEmpty()) {
+        return T();
+    }
+
+    int split = 0;
+    for (int i = 0, j = 0; ; i = j + 1) {
+        j = str.Find(sep, i);
+        if (j < 0) {
+            break;
+        }
+
+        // Skip this separator if it is escaped
+        if (j > 0 && str.GetAt(j - 1) == esc) {
+            // Delete the escape character
+            str.Delete(j - 1);
+            continue;
+        }
+
+        if (sl.size() < limit - 1) {
+            sl.push_back(str.Mid(split, j - split).Trim());
+
+            // Save new splitting position
+            split = j + 1;
+        }
+    }
+    sl.push_back(str.Mid(split).Trim());
+
+    return sl.front();
+}
+
+template<class T, typename SEP>
 T Implode(const CAtlList<T>& sl, SEP sep)
 {
     T ret;
@@ -163,10 +198,13 @@ extern CAtlList<CString>& MakeUpper(CAtlList<CString>& sl);
 extern int LastIndexOfCString(const CString& text, const CString& pattern);
 extern bool IsNameSimilar(const CString& title, const CString& fileName);
 extern CStringW ToUnicode(CStringW str, DWORD CharSet);
-void AppendWithDelimiter(CStringW& output, CStringW append, wchar_t delim = L' ');
-
-CString FormatNumber(CString szNumber, bool bNoFractionalDigits = true);
-void GetLocaleString(LCID lcid, LCTYPE type, CString& output);
+extern void AppendWithDelimiter(CStringW& output, CStringW append, wchar_t delim = L' ');
+extern bool EndsWith(CStringW str, CStringW suffix);
+extern bool StartsWith(CStringW str, CStringW prefix);
+extern bool EndsWithNoCase(CStringW str, CStringW suffix);
+extern bool StartsWithNoCase(CStringW str, CStringW prefix);
+extern CString FormatNumber(CString szNumber, bool bNoFractionalDigits = true);
+extern void GetLocaleString(LCID lcid, LCTYPE type, CString& output);
 
 template<class T>
 T& FastTrimRight(T& str)

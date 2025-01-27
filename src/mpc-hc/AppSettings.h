@@ -36,6 +36,7 @@
 #include <afxsock.h>
 #include "CMPCTheme.h"
 
+
 class FilterOverride;
 
 // flags for CAppSettings::nCS
@@ -94,7 +95,8 @@ enum : UINT64 {
     CLSW_CONFIGLAVVIDEO = CLSW_CONFIGLAVAUDIO << 1,
     CLSW_MUTE = CLSW_CONFIGLAVVIDEO << 1,
     CLSW_VOLUME = CLSW_MUTE << 1,
-    CLSW_UNRECOGNIZEDSWITCH = CLSW_VOLUME << 1, // 46
+    CLSW_THUMBNAILS = CLSW_VOLUME << 1,
+    CLSW_UNRECOGNIZEDSWITCH = CLSW_THUMBNAILS << 1, // 47
 };
 
 enum MpcCaptionState {
@@ -270,7 +272,7 @@ struct AutoChangeFullscreenMode {
     unsigned                    uDelay = 0u;
 };
 
-#define ACCEL_LIST_SIZE 200
+#define ACCEL_LIST_SIZE 201
 
 struct wmcmd_base : public ACCEL {
     BYTE mouse;
@@ -422,9 +424,9 @@ public:
 #define APPSETTINGS_VERSION 8
 
 struct DVD_POSITION {
-    ULONGLONG           llDVDGuid;
-    ULONG               lTitle;
-    DVD_HMSF_TIMECODE   timecode;
+    ULONGLONG           llDVDGuid = 0;
+    ULONG               lTitle    = 0;
+    DVD_HMSF_TIMECODE   timecode  = { 0 };
 };
 
 struct ABRepeat {
@@ -583,6 +585,9 @@ public:
     bool            fTrayIcon;
     bool            fShowOSD;
     bool            fShowCurrentTimeInOSD;
+    int             nOSDTransparency;
+    int             nOSDBorder;
+
     bool            fLimitWindowProportions;
     bool            fSnapToDesktopEdges;
     bool            fHideCDROMsSubMenu;
@@ -621,6 +626,26 @@ public:
     CString         strUIceAddr;
     CUIceClient     UIceClient;
     bool            fGlobalMedia;
+
+    // Mouse
+    UINT			nMouseLeftClick;
+    bool			bMouseLeftClickOpenRecent;
+    UINT			nMouseLeftDblClick;
+    bool			bMouseEasyMove;
+    UINT			nMouseRightClick;
+    struct MOUSE_ASSIGNMENT {
+        UINT normal;
+        UINT ctrl;
+        UINT shift;
+        UINT rbtn;
+    };
+    MOUSE_ASSIGNMENT MouseMiddleClick;
+    MOUSE_ASSIGNMENT MouseX1Click;
+    MOUSE_ASSIGNMENT MouseX2Click;
+    MOUSE_ASSIGNMENT MouseWheelUp;
+    MOUSE_ASSIGNMENT MouseWheelDown;
+    MOUSE_ASSIGNMENT MouseWheelLeft;
+    MOUSE_ASSIGNMENT MouseWheelRight;
 
     // Logo
     int             nLogoId;
@@ -836,7 +861,8 @@ public:
     LANGID          language;
     // Subtitles menu
     bool            fEnableSubtitles;
-    bool            fUseDefaultSubtitlesStyle;
+    bool            bSubtitleOverrideDefaultStyle;
+    bool            bSubtitleOverrideAllStyles;
     // Video Frame
     int             iDefaultVideoSize;
     bool            fKeepAspectRatio;
@@ -955,11 +981,13 @@ public:
     bool bUseAutomaticCaptions;
     bool bUseFreeType;
     bool bUseMediainfoLoadFileDuration;
+    bool bPauseWhileDraggingSeekbar;
     CStringA strOpenTypeLangHint;
 
     CStringW lastQuickOpenPath;
     CStringW lastFileSaveCopyPath;
     CStringW lastFileOpenDirPath;
+    CStringW externalPlayListPath;
 
     int iRedirectOpenToAppendThreshold;
     bool bFullscreenSeparateControls;
@@ -968,6 +996,8 @@ public:
     int iMouseLeftUpDelay;
 
     bool bCaptureDeinterlace;
+    bool bConfirmFileDelete;
+    bool bShowVolumePercentage;
 
 private:
     struct FilterKey {

@@ -135,6 +135,7 @@ BOOL CPPageSubMisc::OnInitDialog()
         PostMessage(WM_SUPPORTED_LANGUAGES_READY); // Notify the window that languages have been fetched
     });
 
+    AdjustDynamicWidgets();
     //    EnableToolTips(TRUE);
     CreateToolTip();
     m_wndToolTip.AddTool(GetDlgItem(IDC_EDIT2), ResStr(IDS_SUB_AUTODL_IGNORE_TOOLTIP));
@@ -213,7 +214,7 @@ void CPPageSubMisc::OnRightClick(NMHDR* pNMHDR, LRESULT* pResult)
             COPY_URL
         };
 
-        CMenu m;
+        CMPCThemeMenu m;
         m.CreatePopupMenu();
         m.AppendMenu(MF_STRING | (provider.Flags(SPF_LOGIN) ? MF_ENABLED : MF_DISABLED), SET_CREDENTIALS, ResStr(IDS_SUBMENU_SETUP));
         m.AppendMenu(MF_STRING | (provider.Flags(SPF_LOGIN) && provider.UserName().length() ? MF_ENABLED : MF_DISABLED), RESET_CREDENTIALS, ResStr(IDS_SUBMENU_RESET));
@@ -227,6 +228,9 @@ void CPPageSubMisc::OnRightClick(NMHDR* pNMHDR, LRESULT* pResult)
         CPoint pt = lpnmlv->ptAction;
         ::MapWindowPoints(lpnmlv->hdr.hwndFrom, HWND_DESKTOP, &pt, 1);
 
+        if (AppNeedsThemedControls()) {
+            m.fulfillThemeReqs();
+        }
         switch (m.TrackPopupMenu(TPM_LEFTBUTTON | TPM_RETURNCMD, pt.x, pt.y, this)) {
             case OPEN_URL:
                 provider.OpenUrl();
@@ -373,4 +377,9 @@ int CALLBACK CPPageSubMisc::SortCompare(LPARAM lParam1, LPARAM lParam2, LPARAM l
     size_t left = ((SubtitlesProvider*)list.GetItemData((int)lParam1))->Index();
     size_t right = ((SubtitlesProvider*)list.GetItemData((int)lParam2))->Index();
     return int(left - right);
+}
+
+void CPPageSubMisc::AdjustDynamicWidgets() {
+    AdjustDynamicWidgetPair(this, IDC_STATIC1, IDC_EDIT2);
+    AdjustDynamicWidgetPair(this, IDC_STATIC2, IDC_EDIT3);
 }

@@ -132,6 +132,7 @@
     <ClCompile Include="..\thirdparty\MessageBoxDialog\MessageBoxDialog.cpp" />
     <ClCompile Include="..\thirdparty\XeScrollBar\XeScrollBarBase.cpp" />
     <ClCompile Include="AboutDlg.cpp" />
+    <ClCompile Include="AddCommandDlg.cpp" />
     <ClCompile Include="AppSettings.cpp" />
     <ClCompile Include="AuthDlg.cpp" />
     <ClCompile Include="BaseGraph.cpp" />
@@ -221,6 +222,7 @@
     <ClCompile Include="Monitors.cpp" />
     <ClCompile Include="MouseTouch.cpp" />
     <ClCompile Include="MouseWndWithArtView.cpp" />
+    <ClCompile Include="MPCFolderPickerDialog.cpp" />
     <ClCompile Include="MPCPngImage.cpp" />
     <ClCompile Include="Mpeg2SectionData.cpp" />
     <ClCompile Include="mplayerc.cpp" />
@@ -228,6 +230,7 @@
     <ClCompile Include="OpenDirHelper.cpp" />
     <ClCompile Include="OpenDlg.cpp" />
     <ClCompile Include="OpenFileDlg.cpp" />
+    <ClCompile Include="OSD.cpp" />
     <ClCompile Include="PlayerBar.cpp" />
     <ClCompile Include="PlayerCaptureBar.cpp" />
     <ClCompile Include="PlayerCaptureDialog.cpp" />
@@ -261,6 +264,7 @@
     <ClCompile Include="PPageInternalFilters.cpp" />
     <ClCompile Include="PPageLogo.cpp" />
     <ClCompile Include="PPageMisc.cpp" />
+    <ClCompile Include="PPageMouse.cpp" />
     <ClCompile Include="PPageOutput.cpp" />
     <ClCompile Include="PPagePlayback.cpp" />
     <ClCompile Include="PPagePlayer.cpp" />
@@ -297,20 +301,17 @@
     <ClCompile Include="SubtitlesProvider.cpp" />
     <ClCompile Include="SubtitlesProviders.cpp" />
     <ClCompile Include="SubtitlesProvidersUtils.cpp" />
-    <ClCompile Include="SubtitleUpDlg.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="TextPassThruFilter.cpp" />
     <ClCompile Include="TunerScanDlg.cpp" />
     <ClCompile Include="UpdateChecker.cpp" />
     <ClCompile Include="UpdateCheckerDlg.cpp" />
     <ClCompile Include="VersionInfo.cpp" />
     <ClCompile Include="vkCodes.cpp" />
-    <ClCompile Include="VMROSD.cpp" />
     <ClCompile Include="VolumeCtrl.cpp" />
     <ClCompile Include="WebClientSocket.cpp" />
     <ClCompile Include="WebServer.cpp" />
     <ClCompile Include="WebServerSocket.cpp" />
+    <ClCompile Include="WicUtils.cpp" />
     <ClCompile Include="WinHotkeyCtrl.cpp" />
     <ClCompile Include="..\thirdparty\XmlRpc4Win\TimXmlRpc.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -322,6 +323,7 @@
     <ClInclude Include="..\thirdparty\MessageBoxDialog\MessageBoxDialog.h" />
     <ClInclude Include="..\thirdparty\XeScrollBar\xescrollbarbase.h" />
     <ClInclude Include="AboutDlg.h" />
+    <ClInclude Include="AddCommandDlg.h" />
     <ClInclude Include="AppSettings.h" />
     <ClInclude Include="AuthDlg.h" />
     <ClInclude Include="BaseGraph.h" />
@@ -418,6 +420,7 @@
     <ClInclude Include="MouseTouch.h" />
     <ClInclude Include="MouseWndWithArtView.h" />
     <ClInclude Include="MpcApi.h" />
+    <ClInclude Include="MPCFolderPickerDialog.h" />
     <ClInclude Include="MPCPngImage.h" />
     <ClInclude Include="Mpeg2SectionData.h" />
     <ClInclude Include="mplayerc.h" />
@@ -425,6 +428,7 @@
     <ClInclude Include="OpenDirHelper.h" />
     <ClInclude Include="OpenDlg.h" />
     <ClInclude Include="OpenFileDlg.h" />
+    <ClInclude Include="OSD.h" />
     <ClInclude Include="PlayerBar.h" />
     <ClInclude Include="PlayerCaptureBar.h" />
     <ClInclude Include="PlayerCaptureDialog.h" />
@@ -458,6 +462,7 @@
     <ClInclude Include="PPageInternalFilters.h" />
     <ClInclude Include="PPageLogo.h" />
     <ClInclude Include="PPageMisc.h" />
+    <ClInclude Include="PPageMouse.h" />
     <ClInclude Include="PPageOutput.h" />
     <ClInclude Include="PPagePlayback.h" />
     <ClInclude Include="PPagePlayer.h" />
@@ -491,7 +496,6 @@
     <ClInclude Include="SubtitlesProvider.h" />
     <ClInclude Include="SubtitlesProviders.h" />
     <ClInclude Include="SubtitlesProvidersUtils.h" />
-    <ClInclude Include="SubtitleUpDlg.h" />
     <ClInclude Include="SVGImage.h" />
     <ClInclude Include="TextPassThruFilter.h" />
     <ClInclude Include="TimerWrappers.h" />
@@ -502,11 +506,11 @@
     <ClInclude Include="UpdateCheckerDlg.h" />
     <ClInclude Include="VersionInfo.h" />
     <ClInclude Include="vkCodes.h" />
-    <ClInclude Include="VMROSD.h" />
     <ClInclude Include="VolumeCtrl.h" />
     <ClInclude Include="WebClientSocket.h" />
     <ClInclude Include="WebServer.h" />
     <ClInclude Include="WebServerSocket.h" />
+    <ClInclude Include="WicUtils.h" />
     <ClInclude Include="WinHotkeyCtrl.h" />
     <ClInclude Include="..\thirdparty\XmlRpc4Win\timxmlrpc.h" />
     <ClInclude Include="YoutubeDL.h" />

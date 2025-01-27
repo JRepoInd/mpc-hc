@@ -292,17 +292,50 @@ CSize CMainFrameControls::GetDockZonesMinSize(unsigned uSaneFallback)
 bool CMainFrameControls::PanelsCoverVideo() const
 {
     const auto& s = AfxGetAppSettings();
-    return m_pMainFrame->IsFullScreenMainFrame() || (!m_pMainFrame->IsD3DFullScreenMode() &&
-                                           s.bHideWindowedControls && s.bHideFullscreenControls && s.bHideFullscreenDockedPanels &&
+    return m_pMainFrame->IsFullScreenMainFrame() && !m_pMainFrame->m_bIsMPCVRExclusiveMode ||
+        (!m_pMainFrame->IsD3DFullScreenMode() && s.bHideWindowedControls && s.bHideFullscreenControls && s.bHideFullscreenDockedPanels &&
                                            s.eHideFullscreenControlsPolicy != CAppSettings::HideFullscreenControlsPolicy::SHOW_NEVER);
 }
 
 bool CMainFrameControls::ToolbarsCoverVideo() const
 {
     const auto& s = AfxGetAppSettings();
-    return m_pMainFrame->IsFullScreenMainFrame() || (!m_pMainFrame->IsD3DFullScreenMode() &&
-                                           s.bHideWindowedControls && s.bHideFullscreenControls &&
+    return m_pMainFrame->IsFullScreenMainFrame() && !m_pMainFrame->m_bIsMPCVRExclusiveMode ||
+        (!m_pMainFrame->IsD3DFullScreenMode() && s.bHideWindowedControls && s.bHideFullscreenControls &&
                                            s.eHideFullscreenControlsPolicy != CAppSettings::HideFullscreenControlsPolicy::SHOW_NEVER);
+}
+
+bool ToolbarInputActive(CPlayerBar *bar) {
+    HWND capture = GetCapture();
+    HWND focus = GetFocus();
+
+    if (capture == nullptr && focus == nullptr) {
+        return false;
+    }
+
+    if (capture == bar->m_hWnd) {
+        return true;
+    }
+
+    if (CWnd* pChildDialog = bar->GetWindow(GW_CHILD)) {
+        CWnd* pChild = pChildDialog->GetWindow(GW_CHILD);
+        while (pChild) {
+            if (CComboBox* cb = DYNAMIC_DOWNCAST(CComboBox, pChild)) {
+                COMBOBOXINFO cbi = { sizeof(COMBOBOXINFO) };
+                if (cb->GetComboBoxInfo(&cbi)) {
+                    if (cbi.hwndList == capture) {
+                        return true;
+                    }
+                }
+            } else if (CEdit* e = DYNAMIC_DOWNCAST(CEdit, pChild)) {
+                if (e->m_hWnd == focus) {
+                    return true;
+                }
+            }
+            pChild = pChild->GetNextWindow();
+        }
+    }
+    return false;
 }
 
 void CMainFrameControls::UpdateToolbarsVisibility()
@@ -322,7 +355,7 @@ void CMainFrameControls::UpdateToolbarsVisibility()
 
     const MLS mls = m_pMainFrame->GetLoadState();
     const bool bCanAutoHide = s.bHideFullscreenControls && (mls == MLS::LOADED || m_bDelayShowNotLoaded) &&
-                              (m_pMainFrame->IsFullScreenMainFrame() || s.bHideWindowedControls) &&
+                              (m_pMainFrame->IsFullScreenMainFrame() || s.bHideWindowedControls && !m_pMainFrame->IsFullScreenSeparate()) &&
                               ePolicy != CAppSettings::HideFullscreenControlsPolicy::SHOW_NEVER;
     const bool bCanHideDockedPanels = s.bHideFullscreenDockedPanels;
 
@@ -350,6 +383,8 @@ void CMainFrameControls::UpdateToolbarsVisibility()
         VERIFY(m_pMainFrame->m_pMVRS->SettingsGetBoolean(L"enableSeekbar", &bOptExclSeekbar));
         bExclSeekbar = (bOptExcl && bOptExclSeekbar);
     } else if (m_bDelayShowNotLoaded && st.bLastHaveExclusiveSeekbar) {
+        bExclSeekbar = true;
+    } else if (m_pMainFrame->IsFullScreenMainFrameExclusiveMPCVR()) {
         bExclSeekbar = true;
     }
 
@@ -631,9 +666,10 @@ void CMainFrameControls::UpdateToolbarsVisibility()
                     const auto panels = it->second; // copy
                     for (const auto panel : panels) {
                         auto pBar = m_panels[panel];
-                        if (!pBar->IsAutohidden() && GetCapture() != pBar->m_hWnd) {
+                        if (!pBar->IsAutohidden() && !ToolbarInputActive(pBar) && !pBar->HasActivePopup()) {
                             bRecalcLayout = true;
                             m_pMainFrame->ShowControlBar(pBar, FALSE, TRUE);
+                            m_pMainFrame->RestoreFocus();
                             pBar->SetAutohidden(true);
                         }
                     }

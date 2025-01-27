@@ -32,6 +32,7 @@
 #include <mvrInterfaces.h>
 #include "FGManager.h"
 #include "CMPCThemeMsgBox.h"
+#include "../VideoRenderers/MPCVRAllocatorPresenter.h"
 
 // CPPageOutput dialog
 
@@ -181,9 +182,11 @@ BOOL CPPageOutput::OnInitDialog()
     std::map<CStringW,CStringW> devicelist = GetAudioDeviceList();
 
     for (auto it = devicelist.cbegin(); it != devicelist.cend(); it++) {
-        m_AudioRendererDisplayNames.Add((*it).second);
-        m_iAudioRendererTypeCtrl.AddString((*it).first);
-        if (s.strAudioRendererDisplayName == (*it).second && m_iAudioRendererType == 0) {
+        CString description = (*it).first;
+        CString deviceid = (*it).second;
+        m_AudioRendererDisplayNames.Add(deviceid);
+        m_iAudioRendererTypeCtrl.AddString(description);
+        if (s.strAudioRendererDisplayName == deviceid && m_iAudioRendererType == 0) {
             m_iAudioRendererType = m_iAudioRendererTypeCtrl.GetCount() - 1;
         }
     }
@@ -442,12 +445,18 @@ void CPPageOutput::OpenVideoRendererSettings() {
         return;
     }
 
-    if (!AfxGetMainFrame()->FilterSettingsByClassID(clsid, this)) { //if it is currently in use, get the running instance
-        CFGFilterRegistry fvr(clsid);
-        CComPtr<IBaseFilter> pBF;
-        CInterfaceList<IUnknown, &IID_IUnknown> pUnks; //unused
-        if (!FAILED(fvr.Create(&pBF, pUnks))) { //otherwise, create our own
-            AfxGetMainFrame()->FilterSettings(CComPtr<IUnknown>(pBF), this);
+    auto m = AfxGetMainFrame();
+    if (!m->FilterSettingsByClassID(clsid, this)) { //if it is currently in use, get the running instance
+        CComPtr<IUnknown> pIU;
+        if (CLSID_MPCVR == clsid && SUCCEEDED(DSObjects::CMPCVRAllocatorPresenter::InstantiateInternalMPCVR(pIU, nullptr))) {
+            m->FilterSettings(pIU, this);
+        } else {
+            CFGFilterRegistry fvr(clsid);
+            CComPtr<IBaseFilter> pBF;
+            CInterfaceList<IUnknown, &IID_IUnknown> pUnks; //unused
+            if (SUCCEEDED(fvr.Create(&pBF, pUnks))) { //otherwise, create our own
+                m->FilterSettings(CComPtr<IUnknown>(pBF), this);
+            }
         }
     }
 }
@@ -559,7 +568,6 @@ void CPPageOutput::OnDSRendererChange()
             GetDlgItem(IDC_CACHESHADERS)->EnableWindow(TRUE);
             GetDlgItem(IDC_DX_SURFACE)->EnableWindow(TRUE);
             GetDlgItem(IDC_DX9RESIZER_COMBO)->EnableWindow(TRUE);
-            GetDlgItem(IDC_FULLSCREEN_MONITOR_CHECK)->EnableWindow(TRUE);
 
             if (m_iAPSurfaceUsage == VIDRNDT_AP_TEXTURE3D) {
                 m_iDSShaderSupport.SetIcon(m_tick);
